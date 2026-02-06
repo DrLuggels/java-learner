@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import type { UserProgress, ExerciseResult } from '../types';
+import { isLoggedIn, saveProgressToGist, loadProgressFromGist } from '../utils/githubAuth';
 
 const defaultProgress: UserProgress = {
   completedTopics: [],
@@ -51,10 +52,36 @@ function saveProgress(progress: UserProgress) {
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState<UserProgress>(loadProgress);
+  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Save to localStorage immediately, debounce Gist sync
   useEffect(() => {
     saveProgress(progress);
+    if (isLoggedIn()) {
+      if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+      syncTimerRef.current = setTimeout(() => {
+        saveProgressToGist(progress);
+      }, 5000);
+    }
   }, [progress]);
+
+  // On mount: try loading from Gist if logged in
+  useEffect(() => {
+    if (isLoggedIn()) {
+      loadProgressFromGist().then(remote => {
+        if (remote && typeof remote === 'object') {
+          const remoteProgress = remote as UserProgress;
+          // Merge: take whichever has more completed topics
+          setProgress(local => {
+            if ((remoteProgress.completedTopics?.length ?? 0) > local.completedTopics.length) {
+              return { ...defaultProgress, ...remoteProgress };
+            }
+            return local;
+          });
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const last = new Date(progress.lastActive);
