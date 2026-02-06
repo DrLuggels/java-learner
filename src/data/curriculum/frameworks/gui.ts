@@ -175,6 +175,70 @@ public class EventHandlingBeispiel {
 [Abbrechen] wurde geklickt!
   -> Vorgang abgebrochen.`,
       editable: true
+    },
+    {
+      title: 'Layout-Manager als Konsolen-Simulation',
+      description: 'Verschiedene Layout-Strategien und deren Verhalten konzeptuell dargestellt.',
+      code: `import java.util.*;
+
+public class LayoutBeispiel {
+
+    // Simulation verschiedener Layout-Strategien
+    interface Layout {
+        void anordnen(List<String> komponenten, int breite);
+    }
+
+    // FlowLayout: Elemente nebeneinander, Umbruch bei Zeilenende
+    static class FlowLayout implements Layout {
+        public void anordnen(List<String> komp, int breite) {
+            System.out.println("=== FlowLayout ===");
+            int pos = 0;
+            StringBuilder zeile = new StringBuilder("| ");
+            for (String k : komp) {
+                if (pos + k.length() > breite) {
+                    System.out.println(zeile + "|");
+                    zeile = new StringBuilder("| ");
+                    pos = 0;
+                }
+                zeile.append("[").append(k).append("] ");
+                pos += k.length() + 3;
+            }
+            System.out.println(zeile + "|");
+        }
+    }
+
+    // BorderLayout: 5 Bereiche (N, S, W, O, Center)
+    static class BorderLayout implements Layout {
+        public void anordnen(List<String> komp, int breite) {
+            System.out.println("=== BorderLayout ===");
+            String[] positionen = {"NORTH", "WEST", "CENTER", "EAST", "SOUTH"};
+            for (int i = 0; i < Math.min(komp.size(), positionen.length); i++) {
+                System.out.printf("  %-8s -> [%s]%n", positionen[i], komp.get(i));
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        List<String> buttons = List.of("Speichern", "Laden", "Neu", "Beenden");
+
+        new FlowLayout().anordnen(buttons, 25);
+        System.out.println();
+        new BorderLayout().anordnen(
+            List.of("Menue", "Navigation", "Inhalt", "Details", "Statusleiste"),
+            40);
+    }
+}`,
+      expectedOutput: `=== FlowLayout ===
+| [Speichern] [Laden] |
+| [Neu] [Beenden] |
+
+=== BorderLayout ===
+  NORTH    -> [Menue]
+  WEST     -> [Navigation]
+  CENTER   -> [Inhalt]
+  EAST     -> [Details]
+  SOUTH    -> [Statusleiste]`,
+      editable: true
     }
   ],
   quiz: [
@@ -201,7 +265,19 @@ public class EventHandlingBeispiel {
       ],
       correctIndex: 1,
       explanation: 'Ein Layout-Manager bestimmt automatisch, wie GUI-Komponenten im Fenster angeordnet werden. Statt fester Pixel-Positionen passt sich das Layout dynamisch an die Fenstergroesse an.'
-    }
+    },
+    {
+      id: 'gui-q3',
+      question: 'Warum duerfen langwierige Operationen nicht im UI-Thread ausgefuehrt werden?',
+      options: [
+        'Der UI-Thread hat keinen Zugriff auf das Netzwerk',
+        'Die Oberflaeche wuerde einfrieren und nicht mehr reagieren',
+        'Langwierige Operationen sind in Java verboten',
+        'Es wuerde eine Exception geworfen',
+      ],
+      correctIndex: 1,
+      explanation: 'Der UI-Thread zeichnet die Oberflaeche und verarbeitet Events. Wenn er mit einer langen Berechnung blockiert ist, reagiert die GUI nicht mehr auf Klicks oder Eingaben -- die Anwendung "friert ein". Daher muessen lange Operationen in Hintergrund-Threads ausgefuehrt werden.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

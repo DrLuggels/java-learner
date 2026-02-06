@@ -95,10 +95,56 @@ public class Main {
       expectedOutput: 'Alle: 1 2 3 4 5 6 7 8 9 10 \nNur gerade: [2, 4, 6, 8, 10]\nVerdoppelt: [4, 8, 12, 16, 20]',
       editable: true,
     },
+    {
+      title: 'Eigene funktionale Interfaces und Method References',
+      description: 'Eigene funktionale Interfaces definieren und alle vier Arten von Method References.',
+      code: `import java.util.*;
+import java.util.function.*;
+
+// Eigenes funktionales Interface
+@FunctionalInterface
+interface Berechnung {
+    double ausfuehren(double a, double b);
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Eigenes funktionales Interface mit Lambda
+        Berechnung addiere = (a, b) -> a + b;
+        Berechnung multipliziere = (a, b) -> a * b;
+        System.out.println("5 + 3 = " + addiere.ausfuehren(5, 3));
+        System.out.println("5 * 3 = " + multipliziere.ausfuehren(5, 3));
+
+        // Method References - 4 Arten:
+        // 1. Statische Methode: Klasse::methode
+        Function<String, Integer> parse = Integer::parseInt;
+        System.out.println("\\nParsed: " + parse.apply("42"));
+
+        // 2. Instanzmethode eines Typs: Typ::methode
+        Function<String, String> toUpper = String::toUpperCase;
+        System.out.println("Upper: " + toUpper.apply("java"));
+
+        // 3. Instanzmethode eines Objekts: objekt::methode
+        List<String> log = new ArrayList<>();
+        Consumer<String> logger = log::add;
+        logger.accept("Eintrag 1");
+        logger.accept("Eintrag 2");
+        System.out.println("Log: " + log);
+
+        // 4. Konstruktor-Referenz: Klasse::new
+        Supplier<ArrayList<String>> listeErzeugen = ArrayList::new;
+        var neueListe = listeErzeugen.get();
+        System.out.println("Neue Liste: " + neueListe);
+    }
+}`,
+      expectedOutput: '5 + 3 = 8.0\n5 * 3 = 15.0\n\nParsed: 42\nUpper: JAVA\nLog: [Eintrag 1, Eintrag 2]\nNeue Liste: []',
+      editable: true,
+    },
   ],
   quiz: [
     { id: 'lam-q1', question: 'Was ist ein funktionales Interface?', options: ['Ein Interface mit vielen Methoden', 'Ein Interface mit genau einer abstrakten Methode', 'Ein Interface ohne Methoden', 'Ein Interface mit static Methoden'], correctIndex: 1, explanation: 'Ein funktionales Interface hat genau EINE abstrakte Methode. Es kann mit @FunctionalInterface annotiert werden.' },
     { id: 'lam-q2', question: 'Was macht Predicate<T>?', options: ['Erzeugt einen Wert', 'Konsumiert einen Wert', 'Prüft eine Bedingung und gibt boolean zurück', 'Transformiert einen Wert'], correctIndex: 2, explanation: 'Predicate<T> hat die Methode test(T) die einen boolean zurückgibt. Perfekt zum Filtern.' },
+    { id: 'lam-q3', question: 'Was ist eine Method Reference wie String::toUpperCase?', options: ['Ein neuer String wird erzeugt', 'Eine Kurzform fuer das Lambda s -> s.toUpperCase()', 'Ein statischer Import', 'Ein Konstruktor-Aufruf'], correctIndex: 1, explanation: 'Method References sind kompakte Schreibweisen fuer Lambdas. String::toUpperCase ist identisch mit s -> s.toUpperCase(). Es gibt vier Arten: statische (Math::max), Instanz (String::length), Objekt (System.out::println) und Konstruktor (ArrayList::new).' },
   ],
   exercises: ['lambdas-01', 'lambdas-02'],
   keyConceptsDE: ['Lambda-Ausdruck', 'Funktionales Interface', 'Predicate', 'Consumer', 'Function', 'Supplier', 'Method Reference'],

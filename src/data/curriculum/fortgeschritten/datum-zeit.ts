@@ -131,6 +131,51 @@ Geparst: 2024-12-25
 Startzeit: 08:00 Uhr`,
       editable: true,
     },
+    {
+      title: 'Vergleiche und Schaltjahr-Pruefung',
+      description: 'Datumswerte vergleichen und nuetzliche Abfragen durchfuehren.',
+      code: `import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+public class DatumVergleichBeispiel {
+    public static void main(String[] args) {
+        LocalDate weihnachten = LocalDate.of(2024, 12, 25);
+        LocalDate silvester = LocalDate.of(2024, 12, 31);
+        LocalDate heute = LocalDate.of(2024, 11, 20);
+
+        // Vergleiche
+        System.out.println("Weihnachten vor Silvester? " + weihnachten.isBefore(silvester));
+        System.out.println("Silvester nach heute? " + silvester.isAfter(heute));
+
+        // Tage zwischen zwei Daten
+        long tage = ChronoUnit.DAYS.between(heute, weihnachten);
+        System.out.println("Tage bis Weihnachten: " + tage);
+
+        long monate = ChronoUnit.MONTHS.between(heute, silvester);
+        System.out.println("Monate bis Silvester: " + monate);
+
+        // Schaltjahr pruefen
+        System.out.println("\\n2024 ist Schaltjahr: " + LocalDate.of(2024, 1, 1).isLeapYear());
+        System.out.println("2023 ist Schaltjahr: " + LocalDate.of(2023, 1, 1).isLeapYear());
+
+        // Erster und letzter Tag des Monats
+        LocalDate erster = heute.withDayOfMonth(1);
+        LocalDate letzter = heute.withDayOfMonth(heute.lengthOfMonth());
+        System.out.println("\\nErster Tag im Monat: " + erster);
+        System.out.println("Letzter Tag im Monat: " + letzter);
+    }
+}`,
+      expectedOutput: `Weihnachten vor Silvester? true
+Silvester nach heute? true
+Tage bis Weihnachten: 35
+Monate bis Silvester: 1
+\n2024 ist Schaltjahr: true
+2023 ist Schaltjahr: false
+\nErster Tag im Monat: 2024-11-01
+Letzter Tag im Monat: 2024-11-30`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -151,6 +196,13 @@ Startzeit: 08:00 Uhr`,
       options: ['Duration', 'Period', 'LocalDateTime', 'DateTimeFormatter'],
       correctIndex: 1,
       explanation: 'Period stellt Zeitspannen in Jahren, Monaten und Tagen dar. Duration wird fuer Stunden, Minuten und Sekunden verwendet.',
+    },
+    {
+      id: 'datum-zeit-q3',
+      question: 'Welches Muster verwendest du in DateTimeFormatter.ofPattern() fuer das deutsche Datumsformat "25.12.2024"?',
+      options: ['yyyy-MM-dd', 'dd/MM/yyyy', 'dd.MM.yyyy', 'MM.dd.yyyy'],
+      correctIndex: 2,
+      explanation: 'Das Muster "dd.MM.yyyy" erzeugt das deutsche Datumsformat mit Tag.Monat.Jahr und Punkten als Trenner. "d" steht fuer Tag, "M" fuer Monat und "y" fuer Jahr.',
     },
   ],
   exercises: [],

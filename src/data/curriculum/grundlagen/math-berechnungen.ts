@@ -148,6 +148,58 @@ Max: 85
 Min: 3`,
       editable: true,
     },
+    {
+      title: 'Auf N Nachkommastellen runden',
+      description: 'Verschiedene Techniken zum Runden auf eine bestimmte Anzahl Nachkommastellen.',
+      code: `public class RundenDemo {
+    public static void main(String[] args) {
+        double wert = 3.456789;
+
+        // Methode 1: Math.round() mit Faktor
+        double auf2 = Math.round(wert * 100.0) / 100.0;
+        double auf3 = Math.round(wert * 1000.0) / 1000.0;
+        double auf0 = Math.round(wert * 1.0) / 1.0;
+
+        System.out.println("=== Runden mit Math.round() ===");
+        System.out.println("Original:          " + wert);
+        System.out.println("Auf 0 Stellen:     " + auf0);
+        System.out.println("Auf 2 Stellen:     " + auf2);
+        System.out.println("Auf 3 Stellen:     " + auf3);
+
+        // Methode 2: String.format() fuer Ausgabe
+        System.out.println("\\n=== Runden mit String.format() ===");
+        System.out.println("2 Stellen: " + String.format("%.2f", wert));
+        System.out.println("4 Stellen: " + String.format("%.4f", wert));
+
+        // Vergleich: ceil, floor, round
+        System.out.println("\\n=== ceil vs floor vs round ===");
+        double[] zahlen = {2.1, 2.5, 2.9, -2.1, -2.9};
+        System.out.printf("%-8s %6s %6s %6s%n", "Wert", "ceil", "floor", "round");
+        for (double z : zahlen) {
+            System.out.printf("%-8.1f %6.1f %6.1f %6d%n",
+                z, Math.ceil(z), Math.floor(z), Math.round(z));
+        }
+    }
+}`,
+      expectedOutput: `=== Runden mit Math.round() ===
+Original:          3.456789
+Auf 0 Stellen:     3.0
+Auf 2 Stellen:     3.46
+Auf 3 Stellen:     3.457
+
+=== Runden mit String.format() ===
+2 Stellen: 3.46
+4 Stellen: 3.4568
+
+=== ceil vs floor vs round ===
+Wert       ceil  floor  round
+2.1         3.0    2.0      2
+2.5         3.0    2.0      3
+2.9         3.0    2.0      3
+-2.1       -2.0   -3.0     -2
+-2.9       -2.0   -3.0     -3`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -173,6 +225,18 @@ Min: 3`,
       ],
       correctIndex: 2,
       explanation: 'Math.pow() gibt immer double zurück, auch wenn das Ergebnis eine Ganzzahl ist. Math.pow(2, 3) ergibt 8.0 als double.',
+    },
+    {
+      id: 'math-berechnungen-q3',
+      question: 'Was ist der Unterschied zwischen `Math.ceil(3.1)` und `Math.floor(3.9)`?',
+      options: [
+        'Beide geben 3.0 zurück',
+        'ceil(3.1) gibt 4.0, floor(3.9) gibt 3.0 — beide runden in Richtung ihres Namens',
+        'ceil(3.1) gibt 3.0, floor(3.9) gibt 4.0',
+        'Beide geben 4.0 zurück',
+      ],
+      correctIndex: 1,
+      explanation: 'Math.ceil() (Decke) rundet immer auf zur nächsten Ganzzahl: ceil(3.1) = 4.0. Math.floor() (Boden) rundet immer ab: floor(3.9) = 3.0.',
     },
   ],
   exercises: ['operators-1', 'operators-2'],

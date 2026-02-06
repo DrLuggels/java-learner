@@ -154,6 +154,57 @@ Aktion: Fruehstueck servieren
 [ENDE] Guten Appetit!`,
       editable: true,
     },
+    {
+      title: 'Schleifen und Merge im Aktivitaetsdiagramm',
+      description: 'Wiederholungen (Schleifen) und Zusammenfuehrung von Pfaden als Java-Code.',
+      code: `import java.util.ArrayList;
+import java.util.List;
+
+public class SchleifenBeispiel {
+
+    public static void main(String[] args) {
+        System.out.println("[START] Einkaufsliste abarbeiten\\n");
+
+        List<String> einkaufsliste = new ArrayList<>(
+            List.of("Milch", "Brot", "Eier", "Kaese"));
+
+        int index = 0;
+
+        // SCHLEIFE: Solange Artikel auf der Liste
+        while (!einkaufsliste.isEmpty()) {
+            String artikel = einkaufsliste.removeFirst();
+
+            // ENTSCHEIDUNG: Artikel verfuegbar?
+            boolean verfuegbar = !artikel.equals("Eier"); // Eier ausverkauft
+
+            if (verfuegbar) {
+                System.out.println("[Ja] " + artikel + " -> In den Wagen gelegt");
+            } else {
+                System.out.println("[Nein] " + artikel + " -> Nicht verfuegbar, uebersprungen");
+            }
+            // MERGE: Beide Pfade fuehren zusammen
+
+            index++;
+        }
+        // Schleifenende: Liste leer
+
+        System.out.println("\\nAktion: Zur Kasse gehen");
+        System.out.println("Aktion: Bezahlen (" + (index - 1) + " Artikel)");
+        System.out.println("[ENDE] Einkauf abgeschlossen");
+    }
+}`,
+      expectedOutput: `[START] Einkaufsliste abarbeiten
+
+[Ja] Milch -> In den Wagen gelegt
+[Ja] Brot -> In den Wagen gelegt
+[Nein] Eier -> Nicht verfuegbar, uebersprungen
+[Ja] Kaese -> In den Wagen gelegt
+
+Aktion: Zur Kasse gehen
+Aktion: Bezahlen (3 Artikel)
+[ENDE] Einkauf abgeschlossen`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -179,6 +230,18 @@ Aktion: Fruehstueck servieren
       ],
       correctIndex: 1,
       explanation: 'Fork/Join (dicker Balken) modelliert parallele Ausfuehrung -- mehrere Aktionen gleichzeitig. Entscheidung/Merge (Raute) modelliert bedingte Verzweigungen -- nur ein Pfad wird gewaehlt.',
+    },
+    {
+      id: 'aktivitaetsdiagramme-q3',
+      question: 'Was sind Swimlanes in einem Aktivitaetsdiagramm?',
+      options: [
+        'Parallele Pfade zwischen Fork und Join',
+        'Bereiche, die zeigen welche Abteilung oder Rolle fuer welche Aktion zustaendig ist',
+        'Schleifen im Kontrollfluss',
+        'Verbindungen zwischen verschiedenen Diagrammen',
+      ],
+      correctIndex: 1,
+      explanation: 'Swimlanes unterteilen das Aktivitaetsdiagramm in vertikale oder horizontale Bereiche. Jeder Bereich ist einer Abteilung, Rolle oder einem System zugeordnet und zeigt die Zustaendigkeit fuer die jeweiligen Aktionen.',
     },
   ],
   exercises: [],

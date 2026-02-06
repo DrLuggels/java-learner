@@ -156,6 +156,72 @@ public class TestpyramideBeispiel {
 
 Testpyramide: Viele Unit > Einige Integration > Wenige E2E`,
       editable: true
+    },
+    {
+      title: 'Testabdeckung und Grenzwerttests',
+      description: 'Wichtige Teststrategien: Aequivalenzklassen und Grenzwertanalyse.',
+      code: `public class GrenzwertBeispiel {
+
+    // Zu testende Methode
+    static String bewerte(int note) {
+        if (note < 1 || note > 6) {
+            throw new IllegalArgumentException("Note muss zwischen 1 und 6 liegen");
+        }
+        return switch (note) {
+            case 1 -> "Sehr gut";
+            case 2 -> "Gut";
+            case 3 -> "Befriedigend";
+            case 4 -> "Ausreichend";
+            case 5 -> "Mangelhaft";
+            case 6 -> "Ungenuegend";
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== Aequivalenzklassen ===");
+        System.out.println("Gueltige Klasse (1-6):");
+        for (int i = 1; i <= 6; i++) {
+            System.out.println("  Note " + i + " -> " + bewerte(i));
+        }
+
+        System.out.println("\\n=== Grenzwertanalyse ===");
+        // Grenzwerte: 0 (ungueltig), 1 (gueltig), 6 (gueltig), 7 (ungueltig)
+        int[] grenzwerte = {0, 1, 6, 7};
+        for (int g : grenzwerte) {
+            try {
+                System.out.println("  Note " + g + " -> " + bewerte(g));
+            } catch (IllegalArgumentException e) {
+                System.out.println("  Note " + g + " -> UNGUELTIG: " + e.getMessage());
+            }
+        }
+
+        System.out.println("\\n=== Testabdeckung ===");
+        System.out.println("Anweisungsabdeckung: Jede Zeile mindestens 1x ausfuehren");
+        System.out.println("Zweigabdeckung: Jeden if/else-Zweig mindestens 1x ausfuehren");
+        System.out.println("Pfadabdeckung: Jede moegliche Kombination testen");
+    }
+}`,
+      expectedOutput: `=== Aequivalenzklassen ===
+Gueltige Klasse (1-6):
+  Note 1 -> Sehr gut
+  Note 2 -> Gut
+  Note 3 -> Befriedigend
+  Note 4 -> Ausreichend
+  Note 5 -> Mangelhaft
+  Note 6 -> Ungenuegend
+
+=== Grenzwertanalyse ===
+  Note 0 -> UNGUELTIG: Note muss zwischen 1 und 6 liegen
+  Note 1 -> Sehr gut
+  Note 6 -> Ungenuegend
+  Note 7 -> UNGUELTIG: Note muss zwischen 1 und 6 liegen
+
+=== Testabdeckung ===
+Anweisungsabdeckung: Jede Zeile mindestens 1x ausfuehren
+Zweigabdeckung: Jeden if/else-Zweig mindestens 1x ausfuehren
+Pfadabdeckung: Jede moegliche Kombination testen`,
+      editable: true
     }
   ],
   quiz: [
@@ -182,7 +248,19 @@ Testpyramide: Viele Unit > Einige Integration > Wenige E2E`,
       ],
       correctIndex: 2,
       explanation: 'Unit-Tests bilden die breite Basis der Testpyramide. Sie sind schnell, guenstig und testen isolierte Einheiten. Es sollte viele Unit-Tests, maessig viele Integrationstests und wenige E2E-Tests geben.'
-    }
+    },
+    {
+      id: 'softwaretests-q3',
+      question: 'Was ist der wichtigste Vorteil automatisierter Tests gegenueber manuellen Tests?',
+      options: [
+        'Automatisierte Tests finden mehr Fehler',
+        'Automatisierte Tests sind wiederholbar, schnell und geben Sicherheit bei Codeaenderungen',
+        'Manuelle Tests sind nicht moeglich',
+        'Automatisierte Tests brauchen keinen Code',
+      ],
+      correctIndex: 1,
+      explanation: 'Automatisierte Tests koennen bei jedem Commit in Sekunden ausgefuehrt werden. Sie geben sofort Feedback, ob Aenderungen etwas kaputt gemacht haben. Manuelle Tests sind langsam, fehleranfaellig und nicht reproduzierbar.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

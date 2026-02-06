@@ -113,6 +113,45 @@ public class Taschenrechner {
 10 / 3 = 3.3333333333333335`,
       editable: true,
     },
+    {
+      title: 'java.io -- Dateien und System-Eigenschaften',
+      description: 'Wichtige Klassen aus java.io und System-Properties abfragen.',
+      code: `import java.io.File;
+
+public class SystemInfoBeispiel {
+    public static void main(String[] args) {
+        // System-Properties aus java.lang.System
+        System.out.println("Java-Version: " + System.getProperty("java.version"));
+        System.out.println("Betriebssystem: " + System.getProperty("os.name"));
+        System.out.println("User-Home: " + System.getProperty("user.home"));
+
+        // java.io.File -- Dateisystem-Informationen
+        File aktuellerOrdner = new File(".");
+        System.out.println("\\nAktueller Ordner: " + aktuellerOrdner.getAbsolutePath());
+        System.out.println("Existiert: " + aktuellerOrdner.exists());
+        System.out.println("Ist Verzeichnis: " + aktuellerOrdner.isDirectory());
+
+        // Math-Klasse aus java.lang
+        System.out.println("\\nMath.PI: " + Math.PI);
+        System.out.println("Math.abs(-42): " + Math.abs(-42));
+        System.out.println("Math.round(3.7): " + Math.round(3.7));
+        System.out.println("Math.random(): " + Math.random());
+    }
+}`,
+      expectedOutput: `Java-Version: 21.0.1
+Betriebssystem: Windows 11
+User-Home: C:\\Users\\student
+
+Aktueller Ordner: C:\\projekte\\.
+Existiert: true
+Ist Verzeichnis: true
+
+Math.PI: 3.141592653589793
+Math.abs(-42): 42
+Math.round(3.7): 4
+Math.random(): 0.7234...`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -128,6 +167,13 @@ public class Taschenrechner {
       options: ['@param', '@return', '@throws', '@version'],
       correctIndex: 1,
       explanation: '@return beschreibt den Rueckgabewert einer Methode. @param beschreibt Parameter, @throws beschreibt Ausnahmen.',
+    },
+    {
+      id: 'java-api-q3',
+      question: 'In welchem Paket findest du die Klassen ArrayList und HashMap?',
+      options: ['java.lang', 'java.io', 'java.util', 'java.net'],
+      correctIndex: 2,
+      explanation: 'java.util enthaelt Hilfsklassen fuer Collections (ArrayList, HashMap, HashSet), Scanner, Random und vieles mehr. java.lang ist fuer Grundklassen wie String und Math.',
     },
   ],
   exercises: ['java-api-01'],

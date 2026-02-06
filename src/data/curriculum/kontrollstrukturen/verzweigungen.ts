@@ -147,6 +147,18 @@ Name: Unbekannt`,
       correctIndex: 2,
       explanation: 'Der ternäre Operator prüft die Bedingung (5 > 3), die true ergibt. Daher wird der Wert nach dem Fragezeichen zurückgegeben: "Ja".',
     },
+    {
+      id: 'verzweigungen-q3',
+      question: 'Was passiert, wenn in einem klassischen switch-Statement das `break` fehlt?',
+      options: [
+        'Es gibt einen Compilerfehler',
+        'Es wird nur der erste Case ausgeführt',
+        'Es tritt ein Fall-Through auf: alle nachfolgenden Cases werden ebenfalls ausgeführt',
+        'Das Programm stürzt ab',
+      ],
+      correctIndex: 2,
+      explanation: 'Ohne break im klassischen switch-Statement tritt ein Fall-Through auf: Nach dem passenden Case werden alle nachfolgenden Cases bis zum nächsten break oder Ende des switch ausgeführt. Die modernen switch-Ausdrücke mit Pfeilsyntax (->) haben dieses Problem nicht.',
+    },
   ],
   exercises: ['cases-01', 'cases-02', 'cases-03'],
   keyConceptsDE: [

@@ -122,6 +122,47 @@ Double-Maximum: 1.7976931348623157E308
 valueOf: 99`,
       editable: true,
     },
+    {
+      title: 'Integer-Cache und Vergleiche mit ==',
+      description: 'Warum == bei Wrapper-Objekten gefaehrlich ist und man equals() verwenden sollte.',
+      code: `public class IntegerCacheBeispiel {
+    public static void main(String[] args) {
+        // Integer-Cache: Werte von -128 bis 127 werden gecacht
+        Integer a = 100;
+        Integer b = 100;
+        System.out.println("a == b (100): " + (a == b));       // true (gecacht!)
+        System.out.println("a.equals(b): " + a.equals(b));     // true
+
+        Integer c = 200;
+        Integer d = 200;
+        System.out.println("\\nc == d (200): " + (c == d));     // false (nicht gecacht!)
+        System.out.println("c.equals(d): " + c.equals(d));     // true
+
+        // Regel: IMMER equals() fuer Wrapper-Vergleiche verwenden!
+        System.out.println("\\n=== Weitere nuetzliche Methoden ===");
+        System.out.println("Integer.toBinaryString(42): " + Integer.toBinaryString(42));
+        System.out.println("Integer.toHexString(255): " + Integer.toHexString(255));
+        System.out.println("Integer.sum(10, 20): " + Integer.sum(10, 20));
+        System.out.println("Double.isNaN(0.0/0.0): " + Double.isNaN(0.0/0.0));
+        System.out.println("Character.isLetter('A'): " + Character.isLetter('A'));
+        System.out.println("Character.isDigit('5'): " + Character.isDigit('5'));
+    }
+}`,
+      expectedOutput: `a == b (100): true
+a.equals(b): true
+
+c == d (200): false
+c.equals(d): true
+
+=== Weitere nuetzliche Methoden ===
+Integer.toBinaryString(42): 101010
+Integer.toHexString(255): ff
+Integer.sum(10, 20): 30
+Double.isNaN(0.0/0.0): true
+Character.isLetter('A'): true
+Character.isDigit('5'): true`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -142,6 +183,18 @@ valueOf: 99`,
       options: ['Integer.valueOf("42")', 'Integer.parseInt("42")', 'Integer.toInt("42")', 'Integer.convert("42")'],
       correctIndex: 1,
       explanation: 'Integer.parseInt() wandelt einen String in einen primitiven int um. Integer.valueOf() liefert dagegen ein Integer-Objekt zurueck.',
+    },
+    {
+      id: 'wrapper-q3',
+      question: 'Was passiert bei Integer nullWert = null; int x = nullWert;?',
+      options: [
+        'x wird 0',
+        'x wird null',
+        'Es gibt eine NullPointerException beim Unboxing',
+        'Der Code kompiliert nicht',
+      ],
+      correctIndex: 2,
+      explanation: 'Beim Unboxing von null wird eine NullPointerException geworfen, da null nicht in einen primitiven Wert umgewandelt werden kann. Deshalb ist Vorsicht bei Wrapper-Objekten geboten, die null sein koennten.',
     },
   ],
   exercises: [],

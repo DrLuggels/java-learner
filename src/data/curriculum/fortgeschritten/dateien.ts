@@ -150,6 +150,70 @@ Alle Notizen:
 3. Notiz 3: Projekt starten`,
       editable: true,
     },
+    {
+      title: 'Dateien mit Files.walk durchsuchen',
+      description: 'Verzeichnisbaeume durchlaufen und Dateien nach Muster filtern.',
+      code: `import java.nio.file.Path;
+import java.nio.file.Files;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class DateiSucheBeispiel {
+    public static void main(String[] args) {
+        try {
+            // Temporaere Teststruktur erstellen
+            Path basis = Files.createTempDirectory("test_suche");
+            Files.writeString(basis.resolve("notiz.txt"), "Hallo");
+            Files.writeString(basis.resolve("bild.png"), "BildDaten");
+            Path unter = Files.createDirectory(basis.resolve("unterordner"));
+            Files.writeString(unter.resolve("daten.txt"), "Mehr Daten");
+            Files.writeString(unter.resolve("code.java"), "class A {}");
+
+            // Files.walk: Alle Dateien im Verzeichnisbaum
+            System.out.println("Alle Dateien:");
+            Files.walk(basis)
+                .filter(Files::isRegularFile)
+                .forEach(p -> System.out.println("  " + basis.relativize(p)));
+
+            // Nur .txt-Dateien finden
+            List<Path> txtDateien = Files.walk(basis)
+                .filter(Files::isRegularFile)
+                .filter(p -> p.toString().endsWith(".txt"))
+                .collect(Collectors.toList());
+            System.out.println("\\nTXT-Dateien: " + txtDateien.size());
+
+            // Dateigroessen ausgeben
+            System.out.println("\\nDateigroessen:");
+            Files.walk(basis)
+                .filter(Files::isRegularFile)
+                .forEach(p -> {
+                    try {
+                        System.out.println("  " + basis.relativize(p) + " -> "
+                            + Files.size(p) + " Bytes");
+                    } catch (IOException e) { }
+                });
+
+        } catch (IOException e) {
+            System.out.println("Fehler: " + e.getMessage());
+        }
+    }
+}`,
+      expectedOutput: `Alle Dateien:
+  notiz.txt
+  bild.png
+  unterordner/daten.txt
+  unterordner/code.java
+
+TXT-Dateien: 2
+
+Dateigroessen:
+  notiz.txt -> 5 Bytes
+  bild.png -> 9 Bytes
+  unterordner/daten.txt -> 9 Bytes
+  unterordner/code.java -> 10 Bytes`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -165,6 +229,13 @@ Alle Notizen:
       options: ['StandardOpenOption.CREATE', 'StandardOpenOption.WRITE', 'StandardOpenOption.APPEND', 'StandardOpenOption.ADD'],
       correctIndex: 2,
       explanation: 'StandardOpenOption.APPEND fuegt Inhalte am Ende der Datei an. Ohne diese Option wird die Datei standardmaessig ueberschrieben.',
+    },
+    {
+      id: 'dateien-q3',
+      question: 'Welche Methode erstellt ein Verzeichnis inklusive aller nichtexistierenden Elternverzeichnisse?',
+      options: ['Files.createDirectory(path)', 'Files.createDirectories(path)', 'Files.mkdir(path)', 'Files.newDirectory(path)'],
+      correctIndex: 1,
+      explanation: 'Files.createDirectories(path) erstellt das Verzeichnis und alle fehlenden Elternverzeichnisse. Files.createDirectory() wuerde fehlschlagen, wenn Elternverzeichnisse fehlen.',
     },
   ],
   exercises: [],

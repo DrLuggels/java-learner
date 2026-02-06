@@ -179,6 +179,91 @@ class RegistrierungsServiceTest {
 //   [OK] registrierungFehlgeschlagenBeiDuplikat
 // 2 Tests erfolgreich`,
       editable: true
+    },
+    {
+      title: 'thenThrow, doAnswer und Capture',
+      description: 'Fortgeschrittene Mockito-Techniken: Exceptions werfen, benutzerdefinierte Antworten und Argument-Capture.',
+      code: `import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+interface Datenbank {
+    void speichern(String key, String value);
+    String laden(String key);
+}
+
+class CacheService {
+    private final Datenbank db;
+
+    CacheService(Datenbank db) { this.db = db; }
+
+    String ladeOderBerechne(String key) {
+        try {
+            String wert = db.laden(key);
+            return wert != null ? wert : "berechnet:" + key;
+        } catch (RuntimeException e) {
+            return "fallback:" + key;
+        }
+    }
+
+    void speichernMitLog(String key, String value) {
+        db.speichern(key, value);
+    }
+}
+
+@ExtendWith(MockitoExtension.class)
+class CacheServiceTest {
+
+    @Mock Datenbank mockDB;
+    @InjectMocks CacheService service;
+
+    @Test
+    void thenThrow_fallbackBeiDatenbankfehler() {
+        // Mock wirft Exception
+        when(mockDB.laden("fehler")).thenThrow(new RuntimeException("DB down"));
+
+        String ergebnis = service.ladeOderBerechne("fehler");
+
+        assertEquals("fallback:fehler", ergebnis);
+    }
+
+    @Test
+    void doAnswer_benutzerdefinierteAntwort() {
+        // doAnswer: Flexibles Verhalten definieren
+        when(mockDB.laden(anyString())).thenAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            return key.startsWith("cache:") ? "gecached!" : null;
+        });
+
+        assertEquals("gecached!", service.ladeOderBerechne("cache:user1"));
+        assertEquals("berechnet:user2", service.ladeOderBerechne("user2"));
+    }
+
+    @Test
+    void argumentCaptor_argumentePruefen() {
+        // ArgumentCaptor: Argumente einfangen und pruefen
+        ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
+
+        service.speichernMitLog("user1", "Anna");
+        service.speichernMitLog("user2", "Bob");
+
+        verify(mockDB, times(2)).speichern(keyCaptor.capture(), valueCaptor.capture());
+
+        assertEquals(java.util.List.of("user1", "user2"), keyCaptor.getAllValues());
+        assertEquals(java.util.List.of("Anna", "Bob"), valueCaptor.getAllValues());
+    }
+}`,
+      expectedOutput: `// JUnit 5 + Mockito Testergebnisse:
+// CacheServiceTest
+//   [OK] thenThrow_fallbackBeiDatenbankfehler
+//   [OK] doAnswer_benutzerdefinierteAntwort
+//   [OK] argumentCaptor_argumentePruefen
+// 3 Tests erfolgreich`,
+      editable: true
     }
   ],
   quiz: [
@@ -205,7 +290,19 @@ class RegistrierungsServiceTest {
       ],
       correctIndex: 2,
       explanation: 'verify(mock, never()).methode() stellt sicher, dass die angegebene Methode auf dem Mock kein einziges Mal aufgerufen wurde. Das ist nuetzlich, um zu pruefen, dass bestimmte Seiteneffekte (z.B. E-Mail senden) unter bestimmten Bedingungen nicht stattfinden.'
-    }
+    },
+    {
+      id: 'mockito-q3',
+      question: 'Was ist der Unterschied zwischen @Mock und @InjectMocks?',
+      options: [
+        'Es gibt keinen Unterschied',
+        '@Mock erstellt ein Mock-Objekt, @InjectMocks erstellt die zu testende Klasse und injiziert die Mocks automatisch',
+        '@InjectMocks erstellt Mocks, @Mock die echte Klasse',
+        '@Mock ist fuer Interfaces, @InjectMocks fuer Klassen',
+      ],
+      correctIndex: 1,
+      explanation: '@Mock erstellt ein Mock-Objekt (simulierte Abhaengigkeit). @InjectMocks erstellt eine echte Instanz der zu testenden Klasse und injiziert alle mit @Mock annotierten Objekte automatisch in deren Konstruktor oder Felder.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

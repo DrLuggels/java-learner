@@ -86,6 +86,41 @@ Matrikelnr: 12345
 Schnitt: 1.7`,
       editable: true,
     },
+    {
+      title: 'Java 21 — Sealed Classes und Pattern Matching',
+      description: 'Demonstration moderner Java-21-Features wie versiegelte Klassen und Pattern Matching im switch.',
+      code: `public class Java21Features {
+    // Sealed Interface: nur bestimmte Klassen dürfen implementieren
+    sealed interface Form permits Kreis, Rechteck {}
+    record Kreis(double radius) implements Form {}
+    record Rechteck(double breite, double hoehe) implements Form {}
+
+    // Pattern Matching im switch (Java 21)
+    static String beschreibe(Form form) {
+        return switch (form) {
+            case Kreis k   -> "Kreis mit Radius " + k.radius();
+            case Rechteck r -> "Rechteck " + r.breite() + " x " + r.hoehe();
+        };
+    }
+
+    public static void main(String[] args) {
+        Form f1 = new Kreis(5.0);
+        Form f2 = new Rechteck(3.0, 4.0);
+
+        System.out.println(beschreibe(f1));
+        System.out.println(beschreibe(f2));
+        System.out.println();
+        System.out.println("Java 21 ist ein LTS-Release.");
+        System.out.println("Sealed Classes + Pattern Matching = typsichere Verzweigungen!");
+    }
+}`,
+      expectedOutput: `Kreis mit Radius 5.0
+Rechteck 3.0 x 4.0
+
+Java 21 ist ein LTS-Release.
+Sealed Classes + Pattern Matching = typsichere Verzweigungen!`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -111,6 +146,18 @@ Schnitt: 1.7`,
       ],
       correctIndex: 1,
       explanation: 'Dank der JVM läuft kompilierter Java-Bytecode auf jedem Betriebssystem, das eine JVM bereitstellt — Windows, macOS, Linux etc.',
+    },
+    {
+      id: 'java-sprache-q3',
+      question: 'Welches Feature wurde mit Java 21 eingeführt?',
+      options: [
+        'Generics',
+        'Lambda-Ausdrücke',
+        'Virtual Threads',
+        'Das var-Keyword',
+      ],
+      correctIndex: 2,
+      explanation: 'Virtual Threads wurden mit Java 21 als finales Feature eingeführt. Generics kamen in Java 5, Lambda-Ausdrücke in Java 8 und var in Java 10.',
     },
   ],
   exercises: ['class-structure-1', 'class-structure-2'],

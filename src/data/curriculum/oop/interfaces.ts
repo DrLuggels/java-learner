@@ -260,6 +260,18 @@ Objekt 4: UNGUELTIG`,
       correctIndex: 1,
       explanation: 'Ein funktionales Interface hat genau eine abstrakte Methode (SAM - Single Abstract Method). Es kann mit Lambda-Ausdruecken oder Methodenreferenzen implementiert werden. @FunctionalInterface ist die optionale Annotation dafuer.',
     },
+    {
+      id: 'interfaces-q3',
+      question: 'Was sind Default-Methoden in Interfaces (seit Java 8)?',
+      options: [
+        'Methoden, die automatisch vom Compiler generiert werden',
+        'Methoden mit einer Standardimplementierung, die von implementierenden Klassen nicht ueberschrieben werden muessen',
+        'Private Hilfsmethoden innerhalb eines Interfaces',
+        'Methoden, die nur in abstrakten Klassen erlaubt sind',
+      ],
+      correctIndex: 1,
+      explanation: 'Default-Methoden (mit dem Schluesselwort `default`) bieten eine Standardimplementierung direkt im Interface. Implementierende Klassen koennen sie ueberschreiben, muessen es aber nicht. Sie wurden eingefuehrt, um bestehende Interfaces erweitern zu koennen, ohne alle implementierenden Klassen zu aendern.',
+    },
   ],
   exercises: ['interfaces-01'],
   keyConceptsDE: [

@@ -129,6 +129,59 @@ String → int: 123
 int → String: 123`,
       editable: true,
     },
+    {
+      title: 'Wrapper-Klassen und Autoboxing',
+      description: 'Wrapper-Klassen für primitive Typen und automatische Konvertierung (Autoboxing/Unboxing).',
+      code: `public class WrapperDemo {
+    public static void main(String[] args) {
+        // Autoboxing: primitiv → Wrapper-Objekt (automatisch)
+        Integer zahl = 42;             // int → Integer
+        Double komma = 3.14;           // double → Double
+        Boolean wahr = true;           // boolean → Boolean
+        Character buchstabe = 'A';     // char → Character
+
+        System.out.println("=== Wrapper-Klassen ===");
+        System.out.println("Integer: " + zahl);
+        System.out.println("Double:  " + komma);
+        System.out.println("Boolean: " + wahr);
+        System.out.println("Character: " + buchstabe);
+
+        // Unboxing: Wrapper-Objekt → primitiv (automatisch)
+        int primitiv = zahl;           // Integer → int
+        System.out.println("\\nUnboxing: " + primitiv);
+
+        // Nützliche Methoden der Wrapper-Klassen
+        System.out.println("\\n=== Nuetzliche Methoden ===");
+        System.out.println("Integer.MAX_VALUE: " + Integer.MAX_VALUE);
+        System.out.println("Integer.MIN_VALUE: " + Integer.MIN_VALUE);
+        System.out.println("Integer.parseInt(\"123\"): " + Integer.parseInt("123"));
+        System.out.println("Double.parseDouble(\"3.14\"): " + Double.parseDouble("3.14"));
+        System.out.println("Integer.toBinaryString(255): " + Integer.toBinaryString(255));
+
+        // null ist nur bei Wrapper-Klassen moeglich
+        Integer nullbar = null;  // OK — Referenztyp
+        // int nichtNull = null;  // Compilerfehler — primitiver Typ!
+        System.out.println("\\nnullbar ist null: " + (nullbar == null));
+    }
+}`,
+      expectedOutput: `=== Wrapper-Klassen ===
+Integer: 42
+Double:  3.14
+Boolean: true
+Character: A
+
+Unboxing: 42
+
+=== Nuetzliche Methoden ===
+Integer.MAX_VALUE: 2147483647
+Integer.MIN_VALUE: -2147483648
+Integer.parseInt("123"): 123
+Double.parseDouble("3.14"): 3.14
+Integer.toBinaryString(255): 11111111
+
+nullbar ist null: true`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -154,6 +207,18 @@ int → String: 123`,
       ],
       correctIndex: 1,
       explanation: 'Bei explizitem Casting von double nach int werden die Nachkommastellen einfach abgeschnitten (nicht gerundet). 3.9 wird zu 3.',
+    },
+    {
+      id: 'datentypen-q3',
+      question: 'Welcher der folgenden Typen ist KEIN primitiver Datentyp in Java?',
+      options: [
+        'int',
+        'boolean',
+        'String',
+        'char',
+      ],
+      correctIndex: 2,
+      explanation: 'String ist ein Referenztyp (eine Klasse), kein primitiver Datentyp. Die 8 primitiven Typen sind: boolean, byte, short, int, long, float, double und char.',
     },
   ],
   exercises: ['data-objects-1', 'data-objects-2'],

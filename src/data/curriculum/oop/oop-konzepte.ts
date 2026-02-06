@@ -196,6 +196,18 @@ Kreisflaeche (r=10): 314.16`,
       correctIndex: 2,
       explanation: 'Polymorphie erlaubt es, Objekte verschiedener Unterklassen ueber einen gemeinsamen Oberklassen-Typ anzusprechen. Die JVM entscheidet zur Laufzeit, welche konkrete Methode aufgerufen wird (dynamisches Binden).',
     },
+    {
+      id: 'oop-konzepte-q3',
+      question: 'Welches OOP-Prinzip wird angewendet, wenn eine Klasse Eigenschaften und Methoden von einer Elternklasse uebernimmt?',
+      options: [
+        'Kapselung',
+        'Abstraktion',
+        'Polymorphie',
+        'Vererbung',
+      ],
+      correctIndex: 3,
+      explanation: 'Vererbung (Inheritance) erlaubt es einer Kindklasse, Attribute und Methoden der Elternklasse zu uebernehmen. Dadurch wird Code-Duplizierung vermieden und eine hierarchische Beziehung ("ist-ein") zwischen Klassen abgebildet.',
+    },
   ],
   exercises: ['oo-01'],
   keyConceptsDE: [

@@ -246,6 +246,18 @@ ClassCastException: Sportwagen ist kein LKW!`,
       correctIndex: 1,
       explanation: 'Das LSP besagt, dass ein Programm korrekt funktionieren muss, wenn Objekte der Superklasse durch Objekte der Subklasse ersetzt werden. Eine Subklasse darf die Erwartungen an die Superklasse nicht verletzen.',
     },
+    {
+      id: 'polymorphie-q3',
+      question: 'Was passiert bei einem ungültigen Downcast, z.B. `Hund h = (Hund) einObjektDasEineKatzeIst;`?',
+      options: [
+        'Der Compiler meldet einen Fehler',
+        'Das Objekt wird automatisch in einen Hund umgewandelt',
+        'Es wird zur Laufzeit eine ClassCastException geworfen',
+        'Die Variable wird auf null gesetzt',
+      ],
+      correctIndex: 2,
+      explanation: 'Ein falscher Downcast kompiliert ohne Fehler, fuehrt aber zur Laufzeit zu einer ClassCastException. Deshalb sollte man vor einem Downcast immer mit `instanceof` pruefen, ob das Objekt tatsaechlich vom gewuenschten Typ ist. Seit Java 16 kann man Pattern Matching verwenden: `if (obj instanceof Hund h) { ... }`.',
+    },
   ],
   exercises: ['polymorphism-01', 'polymorphism-02'],
   keyConceptsDE: [

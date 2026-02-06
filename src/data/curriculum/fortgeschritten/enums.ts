@@ -139,6 +139,55 @@ ERDE: 735.8 N (g = 9.81 m/s2)
 MARS: 279.2 N (g = 3.72 m/s2)`,
       editable: true,
     },
+    {
+      title: 'Enum mit Interface und abstrakten Methoden',
+      description: 'Enums koennen Interfaces implementieren und jeder Wert kann eigenes Verhalten haben.',
+      code: `public class EnumInterfaceBeispiel {
+
+    interface Berechenbar {
+        double berechne(double a, double b);
+    }
+
+    enum Rechenart implements Berechenbar {
+        PLUS("+")   { public double berechne(double a, double b) { return a + b; } },
+        MINUS("-")  { public double berechne(double a, double b) { return a - b; } },
+        MAL("*")    { public double berechne(double a, double b) { return a * b; } },
+        GETEILT("/") { public double berechne(double a, double b) { return a / b; } };
+
+        private final String symbol;
+
+        Rechenart(String symbol) { this.symbol = symbol; }
+
+        public String getSymbol() { return symbol; }
+    }
+
+    public static void main(String[] args) {
+        double a = 10, b = 3;
+
+        for (Rechenart r : Rechenart.values()) {
+            System.out.printf("%.0f %s %.0f = %.2f%n",
+                a, r.getSymbol(), b, r.berechne(a, b));
+        }
+
+        // Enum in switch-Expression (Java 14+)
+        Rechenart op = Rechenart.MAL;
+        String beschreibung = switch (op) {
+            case PLUS -> "Addition";
+            case MINUS -> "Subtraktion";
+            case MAL -> "Multiplikation";
+            case GETEILT -> "Division";
+        };
+        System.out.println("\\nGewaehlt: " + beschreibung);
+    }
+}`,
+      expectedOutput: `10 + 3 = 13.00
+10 - 3 = 7.00
+10 * 3 = 30.00
+10 / 3 = 3.33
+
+Gewaehlt: Multiplikation`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -154,6 +203,13 @@ MARS: 279.2 N (g = 3.72 m/s2)`,
       options: ['public', 'protected', 'private (oder package-private)', 'static'],
       correctIndex: 2,
       explanation: 'Enum-Konstruktoren sind immer private (oder package-private). Man kann keine neuen Enum-Instanzen von aussen erstellen -- die Werte werden nur innerhalb des Enums definiert.',
+    },
+    {
+      id: 'enums-q3',
+      question: 'Was gibt die Methode ordinal() bei einem Enum-Wert zurueck?',
+      options: ['Den Namen als String', 'Die Position (Index) des Werts beginnend bei 0', 'Die Anzahl aller Enum-Werte', 'Den Hash-Code des Werts'],
+      correctIndex: 1,
+      explanation: 'ordinal() gibt die nullbasierte Position des Enum-Werts zurueck, basierend auf der Reihenfolge der Deklaration. Der erste Wert hat ordinal() 0, der zweite 1, usw.',
     },
   ],
   exercises: ['enumerations-01'],

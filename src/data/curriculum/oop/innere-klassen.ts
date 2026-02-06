@@ -249,6 +249,18 @@ Fabrik:  1 2 3 4 5 `,
       correctIndex: 2,
       explanation: 'Lambda-Ausdruecke koennen anonyme Klassen ersetzen, wenn ein funktionales Interface implementiert wird (genau eine abstrakte Methode). Bei Interfaces mit mehreren Methoden oder bei abstrakten Klassen sind weiterhin anonyme Klassen noetig.',
     },
+    {
+      id: 'innere-klassen-q3',
+      question: 'Wie erstellt man eine Instanz einer nicht-statischen Member-Klasse von ausserhalb der aeusseren Klasse?',
+      options: [
+        'new Aussen.Innen()',
+        'new Innen()',
+        'aussen.new Innen() — wobei aussen eine Instanz der aeusseren Klasse ist',
+        'Aussen.Innen.newInstance()',
+      ],
+      correctIndex: 2,
+      explanation: 'Eine nicht-statische Member-Klasse ist an eine Instanz der aeusseren Klasse gebunden. Man benoetigt daher eine Instanz der aeusseren Klasse und verwendet die Syntax `aeusseresObjekt.new InnereKlasse()`. Im Gegensatz dazu kann eine static nested class mit `new Aussen.StatischInnen()` erstellt werden.',
+    },
   ],
   exercises: ['inner-classes-01'],
   keyConceptsDE: [

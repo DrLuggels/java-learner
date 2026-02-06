@@ -173,6 +173,92 @@ class PasswortValidatorTest {
 //   [OK] Null-Passwort wirft IllegalArgumentException
 // 11 Tests erfolgreich`,
       editable: true
+    },
+    {
+      title: 'assertAll, @Nested und @Disabled',
+      description: 'Fortgeschrittene JUnit 5 Features: Gruppierte Assertions, verschachtelte Tests und Tests ueberspringen.',
+      code: `import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class StringUtils {
+    static String umkehren(String s) {
+        if (s == null) throw new IllegalArgumentException("null nicht erlaubt");
+        return new StringBuilder(s).reverse().toString();
+    }
+
+    static boolean istPalindrom(String s) {
+        String bereinigt = s.toLowerCase().replaceAll("[^a-z]", "");
+        return bereinigt.equals(new StringBuilder(bereinigt).reverse().toString());
+    }
+}
+
+class StringUtilsTest {
+
+    @Nested
+    @DisplayName("umkehren()-Tests")
+    class UmkehrenTests {
+
+        @Test
+        @DisplayName("Normaler String wird umgekehrt")
+        void normalerString() {
+            assertEquals("ollaH", StringUtils.umkehren("Hallo"));
+        }
+
+        @Test
+        @DisplayName("Leerer String bleibt leer")
+        void leererString() {
+            assertEquals("", StringUtils.umkehren(""));
+        }
+
+        @Test
+        @DisplayName("Null wirft Exception")
+        void nullWirftException() {
+            assertThrows(IllegalArgumentException.class,
+                () -> StringUtils.umkehren(null));
+        }
+    }
+
+    @Nested
+    @DisplayName("istPalindrom()-Tests")
+    class PalindromTests {
+
+        @Test
+        @DisplayName("Bekannte Palindrome werden erkannt")
+        void palindromeErkennen() {
+            assertAll("Palindrome",
+                () -> assertTrue(StringUtils.istPalindrom("Anna")),
+                () -> assertTrue(StringUtils.istPalindrom("Rentner")),
+                () -> assertTrue(StringUtils.istPalindrom("Lagerregal"))
+            );
+        }
+
+        @Test
+        @DisplayName("Nicht-Palindrome werden abgelehnt")
+        void nichtPalindrome() {
+            assertFalse(StringUtils.istPalindrom("Hallo"));
+        }
+
+        @Test
+        @Disabled("Feature noch nicht implementiert")
+        @DisplayName("Unicode-Palindrome")
+        void unicodePalindrome() {
+            // Wird uebersprungen
+            assertTrue(StringUtils.istPalindrom("Aba"));
+        }
+    }
+}`,
+      expectedOutput: `// JUnit 5 Testergebnisse:
+// StringUtilsTest
+//   umkehren()-Tests
+//     [OK] Normaler String wird umgekehrt
+//     [OK] Leerer String bleibt leer
+//     [OK] Null wirft Exception
+//   istPalindrom()-Tests
+//     [OK] Bekannte Palindrome werden erkannt
+//     [OK] Nicht-Palindrome werden abgelehnt
+//     [SKIP] Unicode-Palindrome (disabled)
+// 5 Tests erfolgreich, 1 uebersprungen`,
+      editable: true
     }
   ],
   quiz: [
@@ -199,7 +285,19 @@ class PasswortValidatorTest {
       ],
       correctIndex: 2,
       explanation: 'assertThrows() nimmt den erwarteten Exception-Typ und ein Lambda (Executable). Es prueft, ob die Ausfuehrung des Lambdas genau diese Exception wirft, und gibt die geworfene Exception zurueck, um weitere Pruefungen (z.B. Nachricht) zu ermoeglichen.'
-    }
+    },
+    {
+      id: 'unit-tests-q3',
+      question: 'Was ist der Vorteil von @ParameterizedTest gegenueber mehreren einzelnen @Test-Methoden?',
+      options: [
+        '@ParameterizedTest ist schneller',
+        'Man kann denselben Test mit verschiedenen Eingabewerten ausfuehren, ohne Code zu duplizieren',
+        '@ParameterizedTest braucht keine Assertions',
+        'Es gibt keinen Vorteil',
+      ],
+      correctIndex: 1,
+      explanation: '@ParameterizedTest fuehrt denselben Testcode mit verschiedenen Eingabewerten aus (z.B. via @ValueSource, @CsvSource, @MethodSource). Das vermeidet Code-Duplikation und macht Grenzwerttests besonders einfach.',
+    },
   ],
   exercises: ['unit-tests-01'],
   keyConceptsDE: [

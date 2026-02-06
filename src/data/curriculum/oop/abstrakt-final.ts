@@ -274,6 +274,18 @@ Kritisch: 2
       correctIndex: 1,
       explanation: 'final bei einer Referenzvariable bedeutet, dass die Referenz selbst nicht mehr geaendert werden kann (kein erneutes Zuweisen). Das Objekt, auf das die Referenz zeigt, kann aber weiterhin veraendert werden (z.B. Attribute setzen, Array-Elemente aendern).',
     },
+    {
+      id: 'abstrakt-final-q3',
+      question: 'Kann eine abstrakte Klasse einen Konstruktor haben?',
+      options: [
+        'Nein, abstrakte Klassen koennen keine Konstruktoren haben',
+        'Ja, aber er kann nur von Subklassen ueber super() aufgerufen werden',
+        'Ja, und er wird automatisch aufgerufen wenn die abstrakte Klasse instanziiert wird',
+        'Nur wenn die Klasse keine abstrakten Methoden hat',
+      ],
+      correctIndex: 1,
+      explanation: 'Abstrakte Klassen koennen Konstruktoren haben, obwohl sie selbst nicht instanziiert werden koennen. Der Konstruktor wird von Subklassen ueber `super()` aufgerufen, um den geerbten Teil des Objekts zu initialisieren. Das ist wichtig, wenn die abstrakte Klasse eigene Attribute hat.',
+    },
   ],
   exercises: ['abstract-final-01'],
   keyConceptsDE: [

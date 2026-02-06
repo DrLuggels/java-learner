@@ -140,6 +140,51 @@ zahl ist: Integer
 Fläche: 10 × 5 = 50`,
       editable: true,
     },
+    {
+      title: 'Gültigkeitsbereich (Scope) von Variablen',
+      description: 'Variablen sind nur innerhalb ihres definierten Blocks sichtbar.',
+      code: `public class ScopeDemo {
+    // Klassenvariable — überall in der Klasse sichtbar
+    static String klassenVariable = "Ich bin überall sichtbar";
+
+    public static void main(String[] args) {
+        // Lokale Variable — nur in main sichtbar
+        int lokaleVar = 10;
+        System.out.println("=== Gueltigkeitsbereich (Scope) ===");
+        System.out.println(klassenVariable);
+        System.out.println("lokaleVar = " + lokaleVar);
+
+        // Block-Variable — nur innerhalb der geschweiften Klammern
+        {
+            int blockVar = 20;
+            System.out.println("blockVar = " + blockVar);
+            System.out.println("lokaleVar im Block = " + lokaleVar);
+        }
+        // blockVar ist hier NICHT mehr zugreifbar!
+        // System.out.println(blockVar); // Compilerfehler!
+
+        // Schleifenvariable — nur in der Schleife sichtbar
+        for (int i = 0; i < 3; i++) {
+            var temp = "Durchlauf " + i;
+            System.out.println(temp);
+        }
+        // i und temp sind hier NICHT mehr zugreifbar!
+
+        System.out.println("\\nVariablen leben nur in ihrem Block!");
+    }
+}`,
+      expectedOutput: `=== Gueltigkeitsbereich (Scope) ===
+Ich bin überall sichtbar
+lokaleVar = 10
+blockVar = 20
+lokaleVar im Block = 10
+Durchlauf 0
+Durchlauf 1
+Durchlauf 2
+
+Variablen leben nur in ihrem Block!`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -165,6 +210,18 @@ Fläche: 10 × 5 = 50`,
       ],
       correctIndex: 2,
       explanation: 'var nutzt Typinferenz: Der Compiler erkennt den Typ aus dem zugewiesenen Wert. Die Variable ist danach aber fest typisiert — var macht Java nicht dynamisch typisiert.',
+    },
+    {
+      id: 'datenobjekte-q3',
+      question: 'Welche Namenskonvention gilt in Java für Konstanten?',
+      options: [
+        'camelCase (z.B. maxWert)',
+        'PascalCase (z.B. MaxWert)',
+        'UPPER_SNAKE_CASE (z.B. MAX_WERT)',
+        'kebab-case (z.B. max-wert)',
+      ],
+      correctIndex: 2,
+      explanation: 'Konstanten (final-Variablen) werden in Java per Konvention in GROSSBUCHSTABEN mit Unterstrichen geschrieben, z.B. MAX_WERT, PI oder MWST_SATZ. camelCase ist für Variablen/Methoden, PascalCase für Klassen.',
     },
   ],
   exercises: ['data-objects-1', 'data-objects-2'],

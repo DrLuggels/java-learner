@@ -223,6 +223,18 @@ Superklasse: Tier`,
       correctIndex: 2,
       explanation: 'Die Standard-Implementierung von toString() in Object gibt getClass().getName() + "@" + Integer.toHexString(hashCode()) zurueck, z.B. "Person@1b6d3586". Daher sollte toString() fuer sinnvolle Ausgaben ueberschrieben werden.',
     },
+    {
+      id: 'object-klasse-q3',
+      question: 'Von welcher Klasse erbt jede Java-Klasse implizit?',
+      options: [
+        'java.lang.System',
+        'java.lang.Class',
+        'java.lang.Object',
+        'java.lang.Base',
+      ],
+      correctIndex: 2,
+      explanation: 'Jede Klasse in Java erbt implizit von `java.lang.Object`, auch wenn kein explizites `extends` angegeben wird. Object stellt grundlegende Methoden wie toString(), equals(), hashCode() und getClass() bereit, die jedes Objekt besitzt.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

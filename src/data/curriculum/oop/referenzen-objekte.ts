@@ -171,6 +171,18 @@ Integer Cache ==: true`,
       correctIndex: 2,
       explanation: 'Der ==-Operator vergleicht bei Referenztypen die Speicheradressen (ob es dasselbe Objekt ist). Die equals()-Methode vergleicht den inhaltlichen Wert, sofern sie in der Klasse korrekt ueberschrieben wurde (z.B. in String, Integer).',
     },
+    {
+      id: 'referenzen-q3',
+      question: 'Was macht der Garbage Collector in Java?',
+      options: [
+        'Er loescht Variablen vom Stack, wenn eine Methode endet',
+        'Er gibt den Speicher von Objekten frei, auf die keine Referenz mehr zeigt',
+        'Er komprimiert den Quellcode zur Laufzeit',
+        'Er schliesst offene Datenbankverbindungen automatisch',
+      ],
+      correctIndex: 1,
+      explanation: 'Der Garbage Collector (GC) der JVM identifiziert Objekte auf dem Heap, auf die keine Referenz mehr verweist, und gibt deren Speicher automatisch frei. Der Programmierer muss sich in Java nicht manuell um die Speicherfreigabe kuemmern (im Gegensatz zu C/C++).',
+    },
   ],
   exercises: ['oo-04'],
   keyConceptsDE: [

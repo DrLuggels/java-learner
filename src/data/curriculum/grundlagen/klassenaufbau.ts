@@ -97,6 +97,41 @@ Keine Argumente übergeben.
 Nutzung: java ArgsDemo <name> <alter>`,
       editable: true,
     },
+    {
+      title: 'Pakete und Imports',
+      description: 'Verwendung von Paketen zur Strukturierung und Import externer Klassen.',
+      code: `// In einer echten Anwendung steht hier: package de.beispiel.app;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class PaketDemo {
+    // Statische Konstante
+    static final String APP_VERSION = "1.0.0";
+
+    // Statische Hilfsmethode
+    static String heuteDatum() {
+        LocalDate heute = LocalDate.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return heute.format(format);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== PaketDemo v" + APP_VERSION + " ===");
+        System.out.println("Datum: " + heuteDatum());
+        System.out.println();
+        System.out.println("Pakete organisieren Klassen in Namensraeume.");
+        System.out.println("Imports machen externe Klassen verfuegbar.");
+        System.out.println("java.lang wird automatisch importiert.");
+    }
+}`,
+      expectedOutput: `=== PaketDemo v1.0.0 ===
+Datum: 06.02.2026
+
+Pakete organisieren Klassen in Namensraeume.
+Imports machen externe Klassen verfuegbar.
+java.lang wird automatisch importiert.`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -122,6 +157,18 @@ Nutzung: java ArgsDemo <name> <alter>`,
       ],
       correctIndex: 2,
       explanation: 'In Java muss jede Anweisung mit einem Semikolon (;) enden. Anders als in Python, wo die Einrückung die Struktur bestimmt.',
+    },
+    {
+      id: 'klassenaufbau-q3',
+      question: 'Welche Aussage über den Dateinamen einer Java-Klasse ist korrekt?',
+      options: [
+        'Der Dateiname kann beliebig gewählt werden',
+        'Der Dateiname muss exakt dem Namen der öffentlichen Klasse entsprechen (inkl. Groß-/Kleinschreibung)',
+        'Der Dateiname muss immer klein geschrieben werden',
+        'Der Dateiname muss mit einem Unterstrich beginnen',
+      ],
+      correctIndex: 1,
+      explanation: 'In Java muss der Dateiname exakt dem Namen der öffentlichen Klasse (public class) entsprechen, inklusive Groß- und Kleinschreibung. Die Klasse "MeineKlasse" muss in der Datei "MeineKlasse.java" stehen.',
     },
   ],
   exercises: ['class-structure-1', 'class-structure-2'],

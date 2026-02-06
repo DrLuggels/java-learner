@@ -146,6 +146,72 @@ public class BinaereSuche {
 Arrays.binarySearch(38): 6
 BinarySearch ist O(log n) — extrem effizient!`,
       editable: true
+    },
+    {
+      title: 'O-Notation praktisch: Laufzeit messen',
+      description: 'Verschiedene Komplexitaeten vergleichen und deren Auswirkung auf die Laufzeit verstehen.',
+      code: `import java.util.*;
+
+public class KomplexitaetBeispiel {
+    // O(1) - Konstant: Zugriff per Index
+    static int zugriffPerIndex(int[] arr, int index) {
+        return arr[index];
+    }
+
+    // O(n) - Linear: Suche in unsortiertem Array
+    static int lineareSuche(int[] arr, int ziel) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == ziel) return i;
+        }
+        return -1;
+    }
+
+    // O(n^2) - Quadratisch: Alle Paare finden
+    static int zaehleGleichePaare(int[] arr) {
+        int paare = 0;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[i] == arr[j]) paare++;
+            }
+        }
+        return paare;
+    }
+
+    public static void main(String[] args) {
+        int[] daten = {5, 3, 8, 3, 1, 5, 9, 3};
+
+        // O(1)
+        System.out.println("O(1) Index-Zugriff: arr[2] = " + zugriffPerIndex(daten, 2));
+
+        // O(n)
+        System.out.println("O(n) Lineare Suche nach 9: Index " + lineareSuche(daten, 9));
+
+        // O(n^2)
+        System.out.println("O(n^2) Gleiche Paare: " + zaehleGleichePaare(daten));
+
+        // O(n log n) - Java-Standard-Sortierung
+        int[] kopie = Arrays.copyOf(daten, daten.length);
+        Arrays.sort(kopie);
+        System.out.println("\\nO(n log n) Sortiert: " + Arrays.toString(kopie));
+
+        // O(log n) - BinarySearch auf sortiertem Array
+        int idx = Arrays.binarySearch(kopie, 8);
+        System.out.println("O(log n) BinarySearch(8): Index " + idx);
+
+        System.out.println("\\n=== Zusammenfassung ===");
+        System.out.println("O(1) < O(log n) < O(n) < O(n log n) < O(n^2)");
+    }
+}`,
+      expectedOutput: `O(1) Index-Zugriff: arr[2] = 8
+O(n) Lineare Suche nach 9: Index 6
+O(n^2) Gleiche Paare: 4
+
+O(n log n) Sortiert: [1, 3, 3, 3, 5, 5, 8, 9]
+O(log n) BinarySearch(8): Index 6
+
+=== Zusammenfassung ===
+O(1) < O(log n) < O(n) < O(n log n) < O(n^2)`,
+      editable: true
     }
   ],
   quiz: [
@@ -172,7 +238,14 @@ BinarySearch ist O(log n) — extrem effizient!`,
       ],
       correctIndex: 2,
       explanation: 'InsertionSort hat im Best Case (bereits sortierte Daten) eine Laufzeit von O(n), weil die innere Schleife kaum ausgefuehrt wird. BubbleSort und SelectionSort bleiben bei O(n²) — SelectionSort prueft immer alle verbleibenden Elemente.'
-    }
+    },
+    {
+      id: 'algorithmen-q3',
+      question: 'Welchen Sortieralgorithmus verwendet Arrays.sort() intern fuer primitive Typen?',
+      options: ['BubbleSort', 'MergeSort', 'Dual-Pivot Quicksort', 'InsertionSort'],
+      correctIndex: 2,
+      explanation: 'Arrays.sort() verwendet fuer primitive Typen den Dual-Pivot Quicksort mit O(n log n) durchschnittlicher Laufzeit. Fuer Objekte wird TimSort (eine Kombination aus MergeSort und InsertionSort) verwendet, da TimSort stabil sortiert.',
+    },
   ],
   exercises: ['algorithms-01'],
   keyConceptsDE: [

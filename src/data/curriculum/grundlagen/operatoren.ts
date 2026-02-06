@@ -172,6 +172,59 @@ Punkte 85: Gut
 6 ist gerade`,
       editable: true,
     },
+    {
+      title: 'Priorität und Klammern bei Operatoren',
+      description: 'Operatorrangfolge (Präzedenz) und explizite Klammerung für lesbare Ausdrücke.',
+      code: `public class PrioritaetDemo {
+    public static void main(String[] args) {
+        // Punkt-vor-Strich gilt auch in Java
+        int ergebnis1 = 2 + 3 * 4;       // 3*4 = 12, dann 2+12 = 14
+        int ergebnis2 = (2 + 3) * 4;     // 2+3 = 5, dann 5*4 = 20
+        System.out.println("=== Prioritaet ===");
+        System.out.println("2 + 3 * 4   = " + ergebnis1);
+        System.out.println("(2 + 3) * 4 = " + ergebnis2);
+
+        // Vergleich hat niedrigere Prioritaet als Arithmetik
+        boolean test = 3 + 4 > 6;  // erst 3+4=7, dann 7>6=true
+        System.out.println("3 + 4 > 6 = " + test);
+
+        // Logische Operatoren: && hat hoehere Prioritaet als ||
+        boolean a = true, b = false, c = true;
+        boolean erg1 = a || b && c;   // b&&c zuerst → false, dann a||false → true
+        boolean erg2 = (a || b) && c; // a||b zuerst → true, dann true&&c → true
+        System.out.println("\\n=== Logische Prioritaet ===");
+        System.out.println("true || false && true   = " + erg1);
+        System.out.println("(true || false) && true = " + erg2);
+
+        // Praktisches Beispiel: Rabattberechnung
+        double preis = 100.0;
+        double rabatt = 0.15;  // 15%
+        double mwst = 0.19;    // 19%
+
+        // Ohne Klammern — falsche Berechnung!
+        double falsch = preis - preis * rabatt * mwst;
+        // Mit Klammern — korrekte Berechnung
+        double korrekt = (preis - preis * rabatt) * (1 + mwst);
+
+        System.out.println("\\n=== Praxisbeispiel ===");
+        System.out.printf("Netto nach Rabatt: %.2f%n", preis - preis * rabatt);
+        System.out.printf("Brutto (korrekt):  %.2f%n", korrekt);
+    }
+}`,
+      expectedOutput: `=== Prioritaet ===
+2 + 3 * 4   = 14
+(2 + 3) * 4 = 20
+3 + 4 > 6 = true
+
+=== Logische Prioritaet ===
+true || false && true   = true
+(true || false) && true = true
+
+=== Praxisbeispiel ===
+Netto nach Rabatt: 85.00
+Brutto (korrekt):  101.15`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -197,6 +250,18 @@ Punkte 85: Gut
       ],
       correctIndex: 1,
       explanation: 'Der &&-Operator (logisches UND) ergibt nur true, wenn BEIDE Seiten true sind. (5 > 3) ist true, aber (2 > 8) ist false. true && false = false.',
+    },
+    {
+      id: 'operatoren-q3',
+      question: 'Was ist der Unterschied zwischen `i++` und `++i`?',
+      options: [
+        'Es gibt keinen Unterschied',
+        'i++ erhöht um 2, ++i um 1',
+        'i++ gibt den alten Wert zurück und erhöht danach, ++i erhöht zuerst und gibt den neuen Wert zurück',
+        'i++ funktioniert nur mit int, ++i mit allen Typen',
+      ],
+      correctIndex: 2,
+      explanation: 'Bei i++ (Post-Inkrement) wird der aktuelle Wert zurückgegeben und erst danach um 1 erhöht. Bei ++i (Prä-Inkrement) wird zuerst um 1 erhöht und dann der neue Wert zurückgegeben.',
     },
   ],
   exercises: ['operators-1', 'operators-2'],

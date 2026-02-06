@@ -138,6 +138,69 @@ Hash von 'Deutsch': 561925962
 Kollisions-Map Groesse: 3
 Wert fuer B: Beta`,
       editable: true
+    },
+    {
+      title: 'Records und Objects.hash() in der Praxis',
+      description: 'Korrekte hashCode-Implementierung mit Objects.hash() und automatische Generierung durch Records.',
+      code: `import java.util.*;
+
+public class HashPraxis {
+    // Record: equals() und hashCode() automatisch generiert
+    record Punkt(int x, int y) {}
+
+    // Klasse mit manueller Implementierung via Objects.hash()
+    static class Adresse {
+        private final String strasse;
+        private final String stadt;
+        private final String plz;
+
+        Adresse(String strasse, String stadt, String plz) {
+            this.strasse = strasse;
+            this.stadt = stadt;
+            this.plz = plz;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Adresse a)) return false;
+            return Objects.equals(strasse, a.strasse)
+                && Objects.equals(stadt, a.stadt)
+                && Objects.equals(plz, a.plz);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(strasse, stadt, plz);
+        }
+
+        @Override
+        public String toString() { return strasse + ", " + plz + " " + stadt; }
+    }
+
+    public static void main(String[] args) {
+        // Record: automatisch korrektes Hashing
+        Set<Punkt> punkte = new HashSet<>();
+        punkte.add(new Punkt(1, 2));
+        punkte.add(new Punkt(1, 2)); // Duplikat!
+        punkte.add(new Punkt(3, 4));
+        System.out.println("Punkte (Set): " + punkte);
+
+        // Klasse: manuell mit Objects.hash()
+        Map<Adresse, String> bewohner = new HashMap<>();
+        bewohner.put(new Adresse("Hauptstr. 1", "Berlin", "10115"), "Anna");
+        bewohner.put(new Adresse("Parkweg 5", "Hamburg", "20095"), "Bob");
+
+        Adresse suche = new Adresse("Hauptstr. 1", "Berlin", "10115");
+        System.out.println("Bewohner: " + bewohner.get(suche));
+        System.out.println("Gleicher Hash: " +
+            (suche.hashCode() == new Adresse("Hauptstr. 1", "Berlin", "10115").hashCode()));
+    }
+}`,
+      expectedOutput: `Punkte (Set): [Punkt[x=1, y=2], Punkt[x=3, y=4]]
+Bewohner: Anna
+Gleicher Hash: true`,
+      editable: true
     }
   ],
   quiz: [
@@ -164,7 +227,14 @@ Wert fuer B: Beta`,
       ],
       correctIndex: 2,
       explanation: 'Bei einer Kollision speichert die HashMap mehrere Eintraege im selben Bucket, verkettet als Linked List. Ab 8 Eintraegen pro Bucket wird die Liste in einen Rot-Schwarz-Baum umgewandelt, um die Suchzeit auf O(log n) zu reduzieren.'
-    }
+    },
+    {
+      id: 'hashing-q3',
+      question: 'Ab wie vielen Eintraegen in einem HashMap-Bucket wird die Linked List in einen Baum umgewandelt?',
+      options: ['4 Eintraege', '8 Eintraege', '16 Eintraege', '32 Eintraege'],
+      correctIndex: 1,
+      explanation: 'Ab 8 Eintraegen in einem Bucket (TREEIFY_THRESHOLD) wandelt die HashMap die Linked List in einen Rot-Schwarz-Baum um. Das verbessert die Worst-Case-Suchzeit von O(n) auf O(log n). Bei weniger als 6 Eintraegen (UNTREEIFY_THRESHOLD) wird zurueck zur Liste gewechselt.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

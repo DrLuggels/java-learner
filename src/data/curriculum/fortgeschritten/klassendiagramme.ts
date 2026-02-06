@@ -184,6 +184,69 @@ Anzahl Tiere: 3
   Buddy sagt: Wuff!`,
       editable: true,
     },
+    {
+      title: 'Interface-Implementierung und Multiplizitaeten',
+      description: 'Ein Interface wird implementiert und Multiplizitaeten werden als Code umgesetzt.',
+      code: `import java.util.ArrayList;
+import java.util.List;
+
+// Interface (wird mit gestricheltem Pfeil dargestellt)
+interface Bezahlbar {
+    double getPreis();
+    String getBeschreibung();
+}
+
+// Implementierung: Klasse -> Interface
+class Produkt implements Bezahlbar {
+    private String name;
+    private double preis;
+
+    public Produkt(String name, double preis) {
+        this.name = name;
+        this.preis = preis;
+    }
+
+    public double getPreis() { return preis; }
+    public String getBeschreibung() { return name + " (" + preis + " EUR)"; }
+}
+
+// Multiplizitaet: Warenkorb hat 0..* Produkte
+class Warenkorb {
+    private List<Bezahlbar> artikel = new ArrayList<>(); // 0..*
+
+    public void hinzufuegen(Bezahlbar artikel) {
+        this.artikel.add(artikel);
+    }
+
+    public double getGesamt() {
+        return artikel.stream().mapToDouble(Bezahlbar::getPreis).sum();
+    }
+
+    public void anzeigen() {
+        System.out.println("Warenkorb (" + artikel.size() + " Artikel):");
+        for (Bezahlbar b : artikel) {
+            System.out.println("  - " + b.getBeschreibung());
+        }
+        System.out.printf("  Gesamt: %.2f EUR%n", getGesamt());
+    }
+}
+
+public class InterfaceBeispiel {
+    public static void main(String[] args) {
+        Warenkorb korb = new Warenkorb();
+        korb.hinzufuegen(new Produkt("Java-Buch", 39.99));
+        korb.hinzufuegen(new Produkt("USB-Kabel", 9.99));
+        korb.hinzufuegen(new Produkt("Laptop-Staender", 29.99));
+        korb.anzeigen();
+    }
+}`,
+      expectedOutput: `Warenkorb (3 Artikel):
+  - Java-Buch (39.99 EUR)
+  - USB-Kabel (9.99 EUR)
+  - Laptop-Staender (29.99 EUR)
+  Gesamt: 79.97 EUR`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -209,6 +272,13 @@ Anzahl Tiere: 3
       ],
       correctIndex: 2,
       explanation: '"0..*" bedeutet, dass null bis beliebig viele Objekte an der Beziehung beteiligt sein koennen. "1..*" wuerde mindestens eins bedeuten.',
+    },
+    {
+      id: 'klassendiagramme-q3',
+      question: 'Welches UML-Symbol steht fuer "private" Sichtbarkeit?',
+      options: ['+ (Plus)', '- (Minus)', '# (Raute)', '~ (Tilde)'],
+      correctIndex: 1,
+      explanation: 'In UML steht "-" fuer private, "+" fuer public, "#" fuer protected und "~" fuer package-private. Die Sichtbarkeit wird vor dem Attribut- oder Methodennamen geschrieben.',
     },
   ],
   exercises: ['class-diagrams-01'],

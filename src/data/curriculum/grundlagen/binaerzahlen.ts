@@ -132,6 +132,49 @@ Ergebnis: 1101
 Ergebnis: 13`,
       editable: true,
     },
+    {
+      title: 'Bitweise Operationen',
+      description: 'Grundlegende bitweise Operatoren in Java: AND, OR, XOR und Shift.',
+      code: `public class BitwiseDemo {
+    public static void main(String[] args) {
+        int a = 0b1100; // 12 dezimal
+        int b = 0b1010; // 10 dezimal
+
+        System.out.println("a = " + Integer.toBinaryString(a) + " (" + a + ")");
+        System.out.println("b = " + Integer.toBinaryString(b) + " (" + b + ")");
+        System.out.println();
+
+        // Bitweise AND: Bit ist 1, wenn BEIDE 1 sind
+        int und = a & b;
+        System.out.println("a & b  = " + Integer.toBinaryString(und) + " (" + und + ")");
+
+        // Bitweise OR: Bit ist 1, wenn MINDESTENS EINES 1 ist
+        int oder = a | b;
+        System.out.println("a | b  = " + Integer.toBinaryString(oder) + " (" + oder + ")");
+
+        // Bitweise XOR: Bit ist 1, wenn GENAU EINES 1 ist
+        int xor = a ^ b;
+        System.out.println("a ^ b  = " + Integer.toBinaryString(xor) + " (" + xor + ")");
+
+        // Links-Shift: Bits nach links verschieben (= Verdopplung)
+        int links = a << 1;
+        System.out.println("a << 1 = " + Integer.toBinaryString(links) + " (" + links + ")");
+
+        // Rechts-Shift: Bits nach rechts verschieben (= Halbierung)
+        int rechts = a >> 1;
+        System.out.println("a >> 1 = " + Integer.toBinaryString(rechts) + " (" + rechts + ")");
+    }
+}`,
+      expectedOutput: `a = 1100 (12)
+b = 1010 (10)
+
+a & b  = 1000 (8)
+a | b  = 1110 (14)
+a ^ b  = 110 (6)
+a << 1 = 11000 (24)
+a >> 1 = 110 (6)`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -157,6 +200,18 @@ Ergebnis: 13`,
       ],
       correctIndex: 2,
       explanation: 'In Java beginnen Hexadezimalzahlen mit dem Präfix 0x (z.B. 0xFF für 255). 0b ist für Binär, 0 allein für Oktal.',
+    },
+    {
+      id: 'binaerzahlen-q3',
+      question: 'Wie viele verschiedene Werte kann ein Byte (8 Bit) darstellen?',
+      options: [
+        '8',
+        '128',
+        '255',
+        '256',
+      ],
+      correctIndex: 3,
+      explanation: 'Ein Byte hat 8 Bit. Jedes Bit kann 0 oder 1 sein, also gibt es 2^8 = 256 verschiedene Kombinationen (Werte von 0 bis 255 bei unsigned bzw. -128 bis 127 bei signed).',
     },
   ],
   exercises: ['binary-numbers-1', 'binary-numbers-2'],

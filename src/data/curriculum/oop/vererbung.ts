@@ -240,6 +240,18 @@ Gesamt: 7000.0 EUR`,
       correctIndex: 1,
       explanation: '@Override ist eine optionale Annotation, die den Compiler anweist zu pruefen, ob die Methode tatsaechlich eine Methode der Elternklasse ueberschreibt. Ohne @Override wuerde ein Tippfehler im Methodennamen unbemerkt eine neue Methode erstellen statt zu ueberschreiben.',
     },
+    {
+      id: 'vererbung-q3',
+      question: 'Welchen Zugriffsmodifikator sollte man fuer Attribute verwenden, die in Subklassen sichtbar, aber ausserhalb der Vererbungshierarchie verborgen sein sollen?',
+      options: [
+        'private',
+        'public',
+        'protected',
+        'default (kein Modifikator)',
+      ],
+      correctIndex: 2,
+      explanation: 'Der Modifikator `protected` erlaubt Zugriff innerhalb der eigenen Klasse, im selben Paket und in allen Subklassen (auch in anderen Paketen). Er bietet damit einen Mittelweg zwischen `private` (nur eigene Klasse) und `public` (ueberall sichtbar).',
+    },
   ],
   exercises: ['oo-05'],
   keyConceptsDE: [

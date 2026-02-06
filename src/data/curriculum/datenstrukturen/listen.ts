@@ -191,6 +191,18 @@ Letzter Index von 'Hallo': 2`,
       correctIndex: 2,
       explanation: '`List.of()` erstellt eine unveränderliche (immutable) Liste. Jeder Versuch, sie zu verändern (add, remove, set), löst eine UnsupportedOperationException aus.',
     },
+    {
+      id: 'listen-q3',
+      question: 'Wann ist eine `LinkedList` einer `ArrayList` vorzuziehen?',
+      options: [
+        'Wenn hauptsaechlich per Index auf Elemente zugegriffen wird',
+        'Wenn die Liste sehr selten veraendert wird',
+        'Wenn sehr haeufig am Anfang oder in der Mitte eingefuegt und geloescht wird',
+        'Wenn die Liste sortiert sein muss',
+      ],
+      correctIndex: 2,
+      explanation: 'LinkedList bietet O(1)-Einfuegen und -Loeschen am Anfang und Ende, waehrend ArrayList dafuer O(n) benoetigt (Elemente muessen verschoben werden). Fuer zufaelligen Indexzugriff ist ArrayList mit O(1) deutlich schneller als LinkedList mit O(n).',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

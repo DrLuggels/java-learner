@@ -113,10 +113,54 @@ public class Main {
       expectedOutput: 'Alter gesetzt: 25\nFehler: Alter muss zwischen 0 und 150 liegen, war: -5',
       editable: true,
     },
+    {
+      title: 'try-with-resources und Exception-Chaining',
+      description: 'Ressourcen automatisch schliessen und Exceptions verketten.',
+      code: `import java.io.*;
+
+public class Main {
+    // Eigene AutoCloseable-Ressource
+    static class MeineRessource implements AutoCloseable {
+        String name;
+        MeineRessource(String name) {
+            this.name = name;
+            System.out.println(name + " geoeffnet");
+        }
+        void arbeiten() { System.out.println(name + " arbeitet..."); }
+        public void close() { System.out.println(name + " geschlossen"); }
+    }
+
+    public static void main(String[] args) {
+        // try-with-resources: automatisch geschlossen!
+        try (var r1 = new MeineRessource("DB-Verbindung");
+             var r2 = new MeineRessource("Datei-Stream")) {
+            r1.arbeiten();
+            r2.arbeiten();
+        } // Beide werden hier automatisch geschlossen (r2 zuerst, dann r1)
+
+        System.out.println();
+
+        // Exception-Chaining: Ursache mitgeben
+        try {
+            try {
+                throw new IOException("Datei nicht gefunden");
+            } catch (IOException e) {
+                throw new RuntimeException("Service-Fehler", e); // Ursache verketten
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Fehler: " + e.getMessage());
+            System.out.println("Ursache: " + e.getCause().getMessage());
+        }
+    }
+}`,
+      expectedOutput: 'DB-Verbindung geoeffnet\nDatei-Stream geoeffnet\nDB-Verbindung arbeitet...\nDatei-Stream arbeitet...\nDatei-Stream geschlossen\nDB-Verbindung geschlossen\n\nFehler: Service-Fehler\nUrsache: Datei nicht gefunden',
+      editable: true,
+    },
   ],
   quiz: [
     { id: 'exc-q1', question: 'Was ist der Unterschied zwischen Checked und Unchecked Exceptions?', options: ['Checked müssen behandelt werden, Unchecked nicht', 'Unchecked müssen behandelt werden, Checked nicht', 'Es gibt keinen Unterschied', 'Checked sind schneller'], correctIndex: 0, explanation: 'Checked Exceptions müssen mit try-catch oder throws deklariert werden. Unchecked (RuntimeException) nicht.' },
     { id: 'exc-q2', question: 'Wann wird der finally-Block ausgeführt?', options: ['Nur bei Fehlern', 'Nur wenn kein Fehler auftritt', 'Immer, auch bei return', 'Nie bei return'], correctIndex: 2, explanation: 'Der finally-Block wird IMMER ausgeführt — egal ob Exception, return oder normaler Ablauf.' },
+    { id: 'exc-q3', question: 'Was ist der Vorteil von try-with-resources gegenueber try-catch-finally?', options: ['Es ist schneller', 'Ressourcen werden automatisch geschlossen, auch bei Exceptions', 'Es faengt mehr Exception-Typen', 'Es braucht keinen catch-Block'], correctIndex: 1, explanation: 'try-with-resources schliesst AutoCloseable-Ressourcen automatisch am Ende des try-Blocks, auch wenn eine Exception auftritt. Das vermeidet Ressourcen-Leaks und macht den Code kuerzer als manuelles Schliessen in finally.' },
   ],
   exercises: ['exceptions-01', 'exceptions-02'],
   keyConceptsDE: ['try-catch-finally', 'Checked vs Unchecked', 'throw/throws', 'Custom Exception', 'try-with-resources', 'Multi-catch'],

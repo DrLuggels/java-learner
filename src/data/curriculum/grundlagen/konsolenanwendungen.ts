@@ -150,6 +150,63 @@ Hobby:   Programmieren
 Status:  volljährig`,
       editable: true,
     },
+    {
+      title: 'Interaktiver Taschenrechner',
+      description: 'Ein einfacher Taschenrechner mit Scanner-Eingabe und formatierter Ausgabe.',
+      code: `import java.util.Scanner;
+
+public class TaschenrechnerDemo {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=== Mini-Taschenrechner ===");
+        System.out.print("Erste Zahl: ");
+        double zahl1 = scanner.nextDouble();
+
+        System.out.print("Operator (+, -, *, /): ");
+        scanner.nextLine(); // Zeilenumbruch verbrauchen
+        String operator = scanner.nextLine();
+
+        System.out.print("Zweite Zahl: ");
+        double zahl2 = scanner.nextDouble();
+
+        double ergebnis = 0;
+        boolean gueltig = true;
+
+        switch (operator) {
+            case "+" -> ergebnis = zahl1 + zahl2;
+            case "-" -> ergebnis = zahl1 - zahl2;
+            case "*" -> ergebnis = zahl1 * zahl2;
+            case "/" -> {
+                if (zahl2 != 0) {
+                    ergebnis = zahl1 / zahl2;
+                } else {
+                    System.out.println("Fehler: Division durch 0!");
+                    gueltig = false;
+                }
+            }
+            default -> {
+                System.out.println("Unbekannter Operator: " + operator);
+                gueltig = false;
+            }
+        }
+
+        if (gueltig) {
+            System.out.printf("\\n%.2f %s %.2f = %.2f%n",
+                zahl1, operator, zahl2, ergebnis);
+        }
+
+        scanner.close();
+    }
+}`,
+      expectedOutput: `=== Mini-Taschenrechner ===
+Erste Zahl: 15.5
+Operator (+, -, *, /): *
+Zweite Zahl: 3
+
+15.50 * 3.00 = 46.50`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -175,6 +232,18 @@ Status:  volljährig`,
       ],
       correctIndex: 2,
       explanation: 'nextInt() liest nur die Zahl, nicht den Zeilenumbruch danach. Dieser bleibt im Eingabepuffer. Ein zusätzlicher nextLine()-Aufruf "verbraucht" diesen Zeilenumbruch, damit der nächste nextLine()-Aufruf korrekt funktioniert.',
+    },
+    {
+      id: 'konsolenanwendungen-q3',
+      question: 'Was bewirkt der printf-Platzhalter `%.2f`?',
+      options: [
+        'Gibt eine Ganzzahl mit 2 Stellen aus',
+        'Gibt eine Gleitkommazahl mit genau 2 Nachkommastellen aus',
+        'Gibt einen String mit maximal 2 Zeichen aus',
+        'Gibt eine Zahl im Binärformat aus',
+      ],
+      correctIndex: 1,
+      explanation: '%.2f ist ein printf-Platzhalter für Gleitkommazahlen (f = float/double) mit genau 2 Nachkommastellen. Z.B. wird 3.14159 als 3.14 ausgegeben.',
     },
   ],
   exercises: ['console-apps-1', 'console-apps-2'],

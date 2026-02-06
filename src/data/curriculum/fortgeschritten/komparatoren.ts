@@ -153,6 +153,52 @@ Nach Abteilung, dann Gehalt (absteigend):
   Mitarbeiter[name=Eva, abteilung=IT, gehalt=55000]`,
       editable: true,
     },
+    {
+      title: 'Null-sichere und benutzerdefinierte Sortierung',
+      description: 'Comparator.nullsFirst/nullsLast und eigene Sortierlogik.',
+      code: `import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class NullSafeComparator {
+    public static void main(String[] args) {
+        // Null-sichere Sortierung
+        List<String> namen = new ArrayList<>(
+            java.util.Arrays.asList("Charlie", null, "Anna", null, "Bob"));
+
+        // nullsFirst: null-Werte zuerst
+        namen.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
+        System.out.println("nullsFirst: " + namen);
+
+        // nullsLast: null-Werte zuletzt
+        namen.sort(Comparator.nullsLast(Comparator.naturalOrder()));
+        System.out.println("nullsLast:  " + namen);
+
+        // Eigene Sortierlogik: nach Laenge, dann alphabetisch
+        List<String> woerter = new ArrayList<>(
+            List.of("Java", "Go", "Kotlin", "C", "Python", "Rust"));
+
+        woerter.sort(Comparator.comparingInt(String::length)
+            .thenComparing(Comparator.naturalOrder()));
+        System.out.println("\\nNach Laenge, dann alphabetisch:");
+        System.out.println(woerter);
+
+        // Umgekehrt: laengste zuerst
+        woerter.sort(Comparator.comparingInt(String::length).reversed());
+        System.out.println("\\nLaengste zuerst:");
+        System.out.println(woerter);
+    }
+}`,
+      expectedOutput: `nullsFirst: [null, null, Anna, Bob, Charlie]
+nullsLast:  [Anna, Bob, Charlie, null, null]
+
+Nach Laenge, dann alphabetisch:
+[C, Go, Java, Rust, Kotlin, Python]
+
+Laengste zuerst:
+[Kotlin, Python, Java, Rust, Go, C]`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -173,6 +219,18 @@ Nach Abteilung, dann Gehalt (absteigend):
       ],
       correctIndex: 1,
       explanation: 'thenComparing() definiert ein zusaetzliches Sortierkriterium, das angewendet wird, wenn das erste Kriterium Gleichheit ergibt. So kann man mehrstufig sortieren.',
+    },
+    {
+      id: 'komparatoren-q3',
+      question: 'Was ist der Unterschied zwischen Comparable und Comparator?',
+      options: [
+        'Es gibt keinen Unterschied',
+        'Comparable definiert die Ordnung innerhalb der Klasse, Comparator ausserhalb',
+        'Comparable ist fuer Strings, Comparator fuer Zahlen',
+        'Comparable sortiert absteigend, Comparator aufsteigend',
+      ],
+      correctIndex: 1,
+      explanation: 'Comparable wird innerhalb der Klasse implementiert (natuerliche Ordnung). Comparator wird ausserhalb definiert und erlaubt verschiedene Sortierungen, ohne die Klasse zu aendern.',
     },
   ],
   exercises: [],

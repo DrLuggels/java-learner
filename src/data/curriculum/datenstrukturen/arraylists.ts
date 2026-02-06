@@ -186,6 +186,18 @@ Konvertiert: [Rot, Grün, Blau, Gelb, Lila]`,
       correctIndex: 0,
       explanation: 'Bei Arrays ist `length` eine unveränderliche Eigenschaft (ohne Klammern). Bei ArrayList ist `size()` eine Methode (mit Klammern), die die aktuelle Anzahl der Elemente zurückgibt.',
     },
+    {
+      id: 'arraylists-q3',
+      question: 'Was passiert, wenn man bei einer `ArrayList<Integer>` das Element mit `remove(1)` entfernt?',
+      options: [
+        'Das Element mit dem Wert 1 wird entfernt',
+        'Das Element am Index 1 (zweites Element) wird entfernt',
+        'Es wird eine Exception geworfen',
+        'Alle Elemente mit dem Wert 1 werden entfernt',
+      ],
+      correctIndex: 1,
+      explanation: 'Bei `remove(1)` wird der Parameter als Index interpretiert, da `int` Vorrang vor `Integer` hat. Um den Wert 1 zu entfernen, muss man `remove(Integer.valueOf(1))` verwenden, damit die `remove(Object)`-Variante aufgerufen wird.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

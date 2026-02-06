@@ -179,6 +179,18 @@ Dreieck:
       correctIndex: 1,
       explanation: '`continue` überspringt den restlichen Code im aktuellen Schleifendurchlauf und springt direkt zur Bedingungsprüfung der nächsten Iteration. Die Schleife selbst wird nicht beendet (das wäre `break`).',
     },
+    {
+      id: 'schleifen-q3',
+      question: 'Was gibt die folgende for-Schleife aus: `for (int i = 0; i < 3; i++) { System.out.print(i + " "); }`?',
+      options: [
+        '1 2 3',
+        '0 1 2',
+        '0 1 2 3',
+        '1 2',
+      ],
+      correctIndex: 1,
+      explanation: 'Die Schleife startet bei i=0, läuft solange i<3 (also für i=0, 1, 2) und gibt bei jedem Durchlauf den Wert von i aus. Bei i=3 ist die Bedingung i<3 false, und die Schleife endet. Ausgabe: 0 1 2.',
+    },
   ],
   exercises: ['loops-01', 'loops-02', 'loops-03'],
   keyConceptsDE: [

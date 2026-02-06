@@ -252,6 +252,18 @@ Bestes Fach: Englisch (1,3)`,
       correctIndex: 2,
       explanation: 'TreeSet speichert Elemente in einem Rot-Schwarz-Baum und hält sie dadurch automatisch sortiert. HashSet ist zwar schneller (O(1) statt O(log n)), garantiert aber keine Reihenfolge. TreeSet bietet zusätzlich Methoden wie first(), last() und subSet().',
     },
+    {
+      id: 'baeume-q3',
+      question: 'Welche Eigenschaft hat ein binaerer Suchbaum (BST)?',
+      options: [
+        'Jeder Knoten hat genau zwei Kinder',
+        'Alle Werte im linken Teilbaum sind kleiner und im rechten Teilbaum groesser als der Knotenwert',
+        'Die Hoehe des Baums ist immer minimal',
+        'Jedes Blatt hat die gleiche Tiefe',
+      ],
+      correctIndex: 1,
+      explanation: 'In einem binaeren Suchbaum gilt die Ordnungseigenschaft: Alle Werte im linken Teilbaum eines Knotens sind kleiner als der Knotenwert, alle im rechten Teilbaum sind groesser. Diese Eigenschaft ermoeglicht eine effiziente Suche in O(log n) bei einem balancierten Baum.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

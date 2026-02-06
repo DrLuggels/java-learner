@@ -98,6 +98,55 @@ Max: 9
 Frequenz von 5: 1
 Unveraenderlich: [1, 2, 5, 8, 9]`,
       editable: true
+    },
+    {
+      title: 'Map-Varianten und fortgeschrittene Operationen',
+      description: 'HashMap, TreeMap und nuetzliche Map-Methoden wie putIfAbsent, merge und computeIfAbsent.',
+      code: `import java.util.*;
+
+public class MapBeispiel {
+    public static void main(String[] args) {
+        // HashMap: Schneller Zugriff O(1), keine Reihenfolge
+        Map<String, Integer> lager = new HashMap<>();
+        lager.put("Laptop", 15);
+        lager.put("Maus", 50);
+        lager.put("Tastatur", 30);
+
+        // putIfAbsent: Nur einfuegen wenn Key nicht existiert
+        lager.putIfAbsent("Laptop", 99); // Kein Effekt, Key existiert
+        lager.putIfAbsent("Monitor", 10); // Wird eingefuegt
+        System.out.println("Lager: " + lager);
+
+        // getOrDefault: Standardwert wenn Key nicht existiert
+        int anzahl = lager.getOrDefault("Drucker", 0);
+        System.out.println("Drucker: " + anzahl);
+
+        // TreeMap: Automatisch nach Keys sortiert
+        Map<String, Integer> sortiert = new TreeMap<>(lager);
+        System.out.println("\\nSortiert: " + sortiert);
+
+        // merge: Werte zusammenfuehren
+        lager.merge("Laptop", 5, Integer::sum); // 15 + 5 = 20
+        System.out.println("Laptop nach merge: " + lager.get("Laptop"));
+
+        // forEach mit Lambda
+        System.out.println("\\nAlle Eintraege:");
+        lager.forEach((key, val) ->
+            System.out.println("  " + key + " -> " + val + " Stueck"));
+    }
+}`,
+      expectedOutput: `Lager: {Laptop=15, Monitor=10, Tastatur=30, Maus=50}
+Drucker: 0
+
+Sortiert: {Laptop=15, Maus=50, Monitor=10, Tastatur=30}
+Laptop nach merge: 20
+
+Alle Eintraege:
+  Laptop -> 20 Stueck
+  Monitor -> 10 Stueck
+  Tastatur -> 30 Stueck
+  Maus -> 50 Stueck`,
+      editable: true
     }
   ],
   quiz: [
@@ -124,7 +173,19 @@ Unveraenderlich: [1, 2, 5, 8, 9]`,
       ],
       correctIndex: 2,
       explanation: 'ArrayDeque ist die empfohlene Implementierung fuer Stack-Verhalten (LIFO) in Java. Die Klasse Stack ist veraltet. ArrayDeque bietet push() und pop() mit O(1)-Performance.'
-    }
+    },
+    {
+      id: 'collections-framework-q3',
+      question: 'Was geben die Factory-Methoden List.of() und Set.of() zurueck?',
+      options: [
+        'Veraenderliche Listen bzw. Sets',
+        'Unveraenderliche (immutable) Listen bzw. Sets',
+        'Null wenn die Argumente leer sind',
+        'Synchronisierte Collections',
+      ],
+      correctIndex: 1,
+      explanation: 'List.of(), Set.of() und Map.of() geben seit Java 9 unveraenderliche Collections zurueck. Jeder Versuch, Elemente hinzuzufuegen oder zu entfernen, wirft eine UnsupportedOperationException.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

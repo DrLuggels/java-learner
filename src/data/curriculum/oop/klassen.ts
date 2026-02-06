@@ -202,6 +202,18 @@ Instanzen gesamt: 3
       correctIndex: 1,
       explanation: 'Static-Methoden gehoeren zur Klasse selbst und werden ueber den Klassennamen aufgerufen (z.B. Math.sqrt()). Instanzmethoden gehoeren zu einem konkreten Objekt und koennen auf dessen Attribute zugreifen.',
     },
+    {
+      id: 'klassen-q3',
+      question: 'Was ist Methodenueberladung (Overloading)?',
+      options: [
+        'Eine Methode in der Subklasse ueberschreibt eine Methode der Superklasse',
+        'Mehrere Methoden mit gleichem Namen aber unterschiedlicher Parameterliste in derselben Klasse',
+        'Eine Methode wird mit dem Schluesselwort overload deklariert',
+        'Eine Methode ruft sich selbst rekursiv auf',
+      ],
+      correctIndex: 1,
+      explanation: 'Methodenueberladung bedeutet, dass mehrere Methoden denselben Namen haben, sich aber in Anzahl, Typ oder Reihenfolge der Parameter unterscheiden. Der Compiler waehlt zur Kompilierzeit die passende Methode anhand der Argumente aus. Der Rueckgabetyp allein reicht nicht zur Unterscheidung.',
+    },
   ],
   exercises: ['oo-02', 'oo-03'],
   keyConceptsDE: [

@@ -157,6 +157,71 @@ reverse:   avaJ ,ollaH
 CSV: Anna, Ben, Clara, David`,
       editable: true,
     },
+    {
+      title: 'String-Formatierung und Textblöcke',
+      description: 'Verschiedene Wege zur String-Formatierung inkl. String.format() und formatted().',
+      code: `public class StringFormatDemo {
+    public static void main(String[] args) {
+        String name = "Anna";
+        int alter = 25;
+        double note = 1.73;
+
+        // String.format() — gibt formatierten String zurück
+        String info = String.format("Name: %s, Alter: %d, Note: %.1f", name, alter, note);
+        System.out.println("=== String.format() ===");
+        System.out.println(info);
+
+        // formatted() — seit Java 15 (Instanzmethode)
+        String info2 = "Name: %s, Alter: %d".formatted(name, alter);
+        System.out.println(info2);
+
+        // String.join() — Strings mit Trennzeichen verbinden
+        String verbunden = String.join(" | ", "Java", "Python", "C++");
+        System.out.println("\\n=== String.join() ===");
+        System.out.println(verbunden);
+
+        // repeat() — String wiederholen (seit Java 11)
+        String linie = "-".repeat(30);
+        System.out.println("\\n" + linie);
+        System.out.println("  Wichtige String-Methoden");
+        System.out.println(linie);
+
+        // isBlank() vs isEmpty() (seit Java 11)
+        String leer = "";
+        String nurLeerzeichen = "   ";
+        System.out.println("\\n=== isBlank vs isEmpty ===");
+        System.out.println("\\"\\".isEmpty(): " + leer.isEmpty());
+        System.out.println("\\"   \\".isEmpty(): " + nurLeerzeichen.isEmpty());
+        System.out.println("\\"   \\".isBlank(): " + nurLeerzeichen.isBlank());
+
+        // startsWith() / endsWith()
+        String datei = "Bericht_2024.pdf";
+        System.out.println("\\n=== startsWith / endsWith ===");
+        System.out.println("Startet mit Bericht: " + datei.startsWith("Bericht"));
+        System.out.println("Endet mit .pdf: " + datei.endsWith(".pdf"));
+    }
+}`,
+      expectedOutput: `=== String.format() ===
+Name: Anna, Alter: 25, Note: 1.7
+Name: Anna, Alter: 25
+
+=== String.join() ===
+Java | Python | C++
+
+------------------------------
+  Wichtige String-Methoden
+------------------------------
+
+=== isBlank vs isEmpty ===
+"".isEmpty(): true
+"   ".isEmpty(): false
+"   ".isBlank(): true
+
+=== startsWith / endsWith ===
+Startet mit Bericht: true
+Endet mit .pdf: true`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -182,6 +247,18 @@ CSV: Anna, Ben, Clara, David`,
       ],
       correctIndex: 1,
       explanation: 'substring(1, 4) gibt die Zeichen von Index 1 (inklusive) bis Index 4 (exklusiv) zurück. "Hallo" → Index 1="a", 2="l", 3="l" → "all".',
+    },
+    {
+      id: 'zeichenketten-q3',
+      question: 'Warum sollte man für viele String-Verkettungen einen StringBuilder verwenden?',
+      options: [
+        'StringBuilder erzeugt schönere Ausgaben',
+        'StringBuilder ist effizienter, weil Strings unveränderlich sind und jede +-Verkettung ein neues Objekt erzeugt',
+        'StringBuilder ist die einzige Möglichkeit, Strings zu verbinden',
+        'StringBuilder verhindert NullPointerExceptions',
+      ],
+      correctIndex: 1,
+      explanation: 'Da Strings in Java unveränderlich (immutable) sind, erzeugt jede Verkettung mit + ein neues String-Objekt. Bei vielen Verkettungen in einer Schleife ist das ineffizient. StringBuilder arbeitet auf einem veränderlichen Puffer und ist daher deutlich schneller.',
     },
   ],
   exercises: ['data-objects-1', 'data-objects-2'],

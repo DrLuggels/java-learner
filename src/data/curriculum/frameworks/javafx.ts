@@ -158,6 +158,79 @@ public class MeinController {
 // - ListView zeigt alle Aufgaben
 // - StatusLabel zeigt Feedback`,
       editable: true
+    },
+    {
+      title: 'TableView und ObservableList',
+      description: 'Daten in einer Tabelle anzeigen mit JavaFX TableView.',
+      code: `import javafx.application.Application;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class TabellenApp extends Application {
+
+    // Datenmodell (braucht JavaFX Properties fuer TableView)
+    public static class Produkt {
+        private final StringProperty name;
+        private final DoubleProperty preis;
+        private final IntegerProperty bestand;
+
+        public Produkt(String name, double preis, int bestand) {
+            this.name = new SimpleStringProperty(name);
+            this.preis = new SimpleDoubleProperty(preis);
+            this.bestand = new SimpleIntegerProperty(bestand);
+        }
+
+        public String getName() { return name.get(); }
+        public double getPreis() { return preis.get(); }
+        public int getBestand() { return bestand.get(); }
+    }
+
+    @Override
+    public void start(Stage stage) {
+        // Daten als ObservableList (Aenderungen werden automatisch angezeigt)
+        ObservableList<Produkt> daten = FXCollections.observableArrayList(
+            new Produkt("Laptop", 999.99, 15),
+            new Produkt("Maus", 29.99, 50),
+            new Produkt("Tastatur", 79.99, 30)
+        );
+
+        // TableView mit Spalten
+        TableView<Produkt> tabelle = new TableView<>(daten);
+
+        TableColumn<Produkt, String> nameSpalte = new TableColumn<>("Name");
+        nameSpalte.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Produkt, Double> preisSpalte = new TableColumn<>("Preis");
+        preisSpalte.setCellValueFactory(new PropertyValueFactory<>("preis"));
+
+        TableColumn<Produkt, Integer> bestandSpalte = new TableColumn<>("Bestand");
+        bestandSpalte.setCellValueFactory(new PropertyValueFactory<>("bestand"));
+
+        tabelle.getColumns().addAll(nameSpalte, preisSpalte, bestandSpalte);
+
+        // Button zum Hinzufuegen
+        Button btn = new Button("Produkt hinzufuegen");
+        btn.setOnAction(e -> daten.add(new Produkt("Neues Produkt", 0.0, 0)));
+
+        Scene scene = new Scene(new VBox(10, tabelle, btn), 400, 300);
+        stage.setTitle("Produktverwaltung");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) { launch(args); }
+}`,
+      expectedOutput: `// GUI-Anwendung wird gestartet:
+// Fenster "Produktverwaltung" (400x300)
+// Tabelle mit Spalten: Name | Preis | Bestand
+// Zeilen: Laptop/999.99/15, Maus/29.99/50, Tastatur/79.99/30
+// Button: "Produkt hinzufuegen" ergaenzt neue Zeile`,
+      editable: true
     }
   ],
   quiz: [
@@ -184,7 +257,19 @@ public class MeinController {
       ],
       correctIndex: 2,
       explanation: 'Alle JavaFX-CSS-Eigenschaften beginnen mit dem Praefix -fx- (z.B. -fx-background-color, -fx-font-size, -fx-text-fill), um sie von Standard-CSS-Eigenschaften zu unterscheiden.'
-    }
+    },
+    {
+      id: 'javafx-q3',
+      question: 'Was ist der Vorteil von FXML gegenueber reinem Java-Code fuer die GUI?',
+      options: [
+        'FXML ist schneller zur Laufzeit',
+        'FXML trennt die GUI-Struktur vom Java-Code (Separation of Concerns)',
+        'FXML braucht keinen Controller',
+        'FXML funktioniert nur mit CSS',
+      ],
+      correctIndex: 1,
+      explanation: 'FXML trennt die UI-Beschreibung (XML) vom Verhalten (Java-Controller). Das verbessert die Wartbarkeit, ermoeglicht Arbeitsteilung (Designer arbeiten an FXML/CSS, Entwickler am Code) und erlaubt die Nutzung von visuellen Editoren wie Scene Builder.',
+    },
   ],
   exercises: [],
   keyConceptsDE: [

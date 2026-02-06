@@ -173,6 +173,18 @@ Summe aller Elemente: 45`,
       correctIndex: 2,
       explanation: '`length` ist bei Arrays eine Eigenschaft (kein Methodenaufruf), daher ohne Klammern: `arr.length`. Bei ArrayList hingegen verwendet man `size()`.',
     },
+    {
+      id: 'arrays-q3',
+      question: 'Welche Aussage ueber mehrdimensionale Arrays in Java ist korrekt?',
+      options: [
+        'Java unterstuetzt nur eindimensionale Arrays',
+        'Ein zweidimensionales Array ist ein Array von Arrays',
+        'Mehrdimensionale Arrays muessen immer quadratisch sein',
+        'Mehrdimensionale Arrays werden mit ArrayList erstellt',
+      ],
+      correctIndex: 1,
+      explanation: 'In Java ist ein zweidimensionales Array ein Array, dessen Elemente selbst Arrays sind (Array von Arrays). Die einzelnen Zeilen koennen sogar unterschiedliche Laengen haben (sogenannte "jagged arrays").',
+    },
   ],
   exercises: ['arrays-01', 'arrays-02'],
   keyConceptsDE: [

@@ -167,6 +167,71 @@ Die Zahlenfolgen sind identisch!
 Passwort: kR7mNx2pLqWs`,
       editable: true,
     },
+    {
+      title: 'Zufallsgesteuerte Anwendung: Lottozahlen',
+      description: 'Praktisches Beispiel: 6 aus 49 Lottozahlen ohne Duplikate generieren.',
+      code: `import java.util.Random;
+import java.util.Arrays;
+
+public class LottoDemo {
+    public static void main(String[] args) {
+        Random random = new Random();
+        int[] lottozahlen = new int[6];
+        int gezogen = 0;
+
+        System.out.println("=== Lotto: 6 aus 49 ===");
+
+        // Ziehe 6 verschiedene Zahlen
+        while (gezogen < 6) {
+            int zahl = random.nextInt(1, 50); // 1 bis 49
+            // Prüfen, ob Zahl schon gezogen wurde
+            boolean doppelt = false;
+            for (int i = 0; i < gezogen; i++) {
+                if (lottozahlen[i] == zahl) {
+                    doppelt = true;
+                    break;
+                }
+            }
+            if (!doppelt) {
+                lottozahlen[gezogen] = zahl;
+                gezogen++;
+            }
+        }
+
+        // Sortieren und ausgeben
+        Arrays.sort(lottozahlen);
+        System.out.print("Lottozahlen: ");
+        for (int i = 0; i < lottozahlen.length; i++) {
+            if (i > 0) System.out.print(", ");
+            System.out.print(lottozahlen[i]);
+        }
+        System.out.println();
+
+        // Statistik: 1000 Wuerfelwuerfe
+        System.out.println("\\n=== Statistik: 1000 Wuerfe ===");
+        int[] zaehler = new int[6]; // Index 0-5 fuer Augenzahl 1-6
+        for (int i = 0; i < 1000; i++) {
+            int wurf = random.nextInt(6); // 0-5
+            zaehler[wurf]++;
+        }
+        for (int i = 0; i < 6; i++) {
+            System.out.printf("Augenzahl %d: %d Mal (%.1f%%)%n",
+                i + 1, zaehler[i], zaehler[i] / 10.0);
+        }
+    }
+}`,
+      expectedOutput: `=== Lotto: 6 aus 49 ===
+Lottozahlen: 5, 12, 23, 31, 38, 44
+
+=== Statistik: 1000 Wuerfe ===
+Augenzahl 1: 172 Mal (17.2%)
+Augenzahl 2: 158 Mal (15.8%)
+Augenzahl 3: 169 Mal (16.9%)
+Augenzahl 4: 164 Mal (16.4%)
+Augenzahl 5: 175 Mal (17.5%)
+Augenzahl 6: 162 Mal (16.2%)`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -192,6 +257,18 @@ Passwort: kR7mNx2pLqWs`,
       ],
       correctIndex: 2,
       explanation: 'random.nextInt(6) erzeugt Zahlen von 0 bis 5. Mit +1 verschiebt man den Bereich auf 1 bis 6. Alternativ: random.nextInt(1, 7) seit Java 17.',
+    },
+    {
+      id: 'pseudozufallszahlen-q3',
+      question: 'Welchen Wertebereich liefert `Math.random()`?',
+      options: [
+        '0 bis 1 (inklusive beider Grenzen)',
+        '0.0 (inklusive) bis 1.0 (exklusive)',
+        '1 bis 100',
+        '0 bis Integer.MAX_VALUE',
+      ],
+      correctIndex: 1,
+      explanation: 'Math.random() liefert einen double-Wert >= 0.0 und < 1.0. Die 0.0 ist inklusive, die 1.0 ist exklusive. Um z.B. 1-6 zu erhalten: (int)(Math.random() * 6) + 1.',
     },
   ],
   exercises: ['operators-1', 'operators-2'],

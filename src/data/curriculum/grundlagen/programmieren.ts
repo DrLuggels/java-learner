@@ -65,6 +65,38 @@ Plattform: Windows 11
 Java-Version: 21`,
       editable: true,
     },
+    {
+      title: 'Kommentare in Java',
+      description: 'Einzeilige und mehrzeilige Kommentare zur Dokumentation von Code.',
+      code: `public class KommentarDemo {
+    public static void main(String[] args) {
+        // Einzeiliger Kommentar — wird vom Compiler ignoriert
+        System.out.println("Zeile 1");
+
+        /* Mehrzeiliger Kommentar:
+           Alles zwischen den Zeichen
+           wird ignoriert. */
+        System.out.println("Zeile 2");
+
+        /**
+         * Javadoc-Kommentar:
+         * Wird zur automatischen
+         * Dokumentation verwendet.
+         */
+        System.out.println("Zeile 3");
+
+        // Kommentare helfen anderen Entwicklern,
+        // den Code zu verstehen.
+        int ergebnis = 2 + 3; // Inline-Kommentar
+        System.out.println("2 + 3 = " + ergebnis);
+    }
+}`,
+      expectedOutput: `Zeile 1
+Zeile 2
+Zeile 3
+2 + 3 = 5`,
+      editable: true,
+    },
   ],
   quiz: [
     {
@@ -90,6 +122,18 @@ Java-Version: 21`,
       ],
       correctIndex: 1,
       explanation: 'Die JVM ermöglicht es, kompilierten Java-Bytecode auf jedem Betriebssystem auszuführen, auf dem eine JVM installiert ist — das ist das "Write Once, Run Anywhere"-Prinzip.',
+    },
+    {
+      id: 'programmieren-q3',
+      question: 'Was ist der Unterschied zwischen einem Compiler und einem Interpreter?',
+      options: [
+        'Ein Compiler ist schneller als ein Interpreter',
+        'Ein Compiler übersetzt den gesamten Code vor der Ausführung, ein Interpreter arbeitet Zeile für Zeile',
+        'Ein Interpreter erzeugt Maschinencode, ein Compiler nicht',
+        'Es gibt keinen Unterschied — beides sind Synonyme',
+      ],
+      correctIndex: 1,
+      explanation: 'Ein Compiler übersetzt den gesamten Quellcode auf einmal in Maschinencode oder Bytecode, bevor das Programm ausgeführt wird. Ein Interpreter liest und führt den Code Zeile für Zeile zur Laufzeit aus.',
     },
   ],
   exercises: ['class-structure-1', 'class-structure-2'],

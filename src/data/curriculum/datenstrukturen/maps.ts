@@ -218,6 +218,18 @@ Häufigster Buchstabe: R (3x)`,
       correctIndex: 1,
       explanation: 'HashMap hat keine garantierte Reihenfolge der Einträge, bietet aber O(1)-Zugriff. TreeMap sortiert die Schlüssel automatisch in natürlicher Ordnung, hat aber O(log n)-Zugriff. Beide implementieren das Map-Interface.',
     },
+    {
+      id: 'maps-q3',
+      question: 'Was gibt `map.get(key)` zurueck, wenn der Schluessel nicht in der Map vorhanden ist?',
+      options: [
+        'Eine KeyNotFoundException wird geworfen',
+        'Ein leerer String',
+        'null',
+        'Der Standardwert des Wert-Typs (z.B. 0 fuer Integer)',
+      ],
+      correctIndex: 2,
+      explanation: 'Wenn ein Schluessel nicht vorhanden ist, gibt `get()` den Wert `null` zurueck. Um einen Standardwert statt null zu erhalten, kann man `getOrDefault(key, defaultValue)` verwenden. Bei primitiven Wrapper-Typen ist Vorsicht geboten, da Unboxing von null eine NullPointerException ausloest.',
+    },
   ],
   exercises: ['maps-01', 'maps-02'],
   keyConceptsDE: [
