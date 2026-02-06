@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useProgress } from '../hooks/useProgress';
 import SkillRadar from '../components/dashboard/SkillRadar';
+import ReviewSection from '../components/dashboard/ReviewSection';
 import { moduleConfig } from '../components/layout/Sidebar';
 
 export default function HomePage() {
@@ -82,6 +83,11 @@ export default function HomePage() {
           </div>
           <div className="text-2xl font-bold text-dark-100">{Object.keys(progress.completedExercises).length}</div>
         </div>
+      </div>
+
+      {/* Spaced Repetition Review Section */}
+      <div className="mb-8">
+        <ReviewSection />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 mb-8">

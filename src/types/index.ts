@@ -89,6 +89,7 @@ export interface UserProgress {
   lastActive: string;
   weakTopics: string[];
   savedCode: Record<string, string>;
+  lastReviewDates: Record<string, string>;
 }
 
 export interface ExerciseResult {

@@ -5,6 +5,7 @@ import {
   Code2, HelpCircle, ArrowRight, Lightbulb
 } from 'lucide-react';
 import CodeEditor from '../components/editor/CodeEditor';
+import TopicVisualization from '../components/visualizations/TopicVisualizations';
 import { useProgress } from '../hooks/useProgress';
 import { moduleConfig } from '../components/layout/Sidebar';
 import { getTopicById, getAllTopics } from '../data/curriculum';
@@ -93,6 +94,9 @@ export default function LearnPage() {
 
       {/* Content */}
       <div className="lesson-content mb-8" dangerouslySetInnerHTML={{ __html: renderMarkdown(topic.content) }} />
+
+      {/* Topic Visualization */}
+      <TopicVisualization topicId={topic.id} />
 
       {/* Code Examples */}
       {topic.codeExamples.length > 0 && (

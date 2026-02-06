@@ -12,6 +12,7 @@ const defaultProgress: UserProgress = {
   lastActive: new Date().toISOString(),
   weakTopics: [],
   savedCode: {},
+  lastReviewDates: {},
 };
 
 interface ProgressContextType {
@@ -26,6 +27,7 @@ interface ProgressContextType {
   getModuleProgress: (moduleId: string, topicIds: string[]) => number;
   getOverallProgress: (totalTopics: number) => number;
   getWeakTopics: () => string[];
+  getLastReviewDate: (topicId: string) => string | null;
   resetProgress: () => void;
 }
 
@@ -97,7 +99,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const completeTopic = useCallback((topicId: string) => {
     setProgress(p => {
       if (p.completedTopics.includes(topicId)) return p;
-      return { ...p, completedTopics: [...p.completedTopics, topicId] };
+      return {
+        ...p,
+        completedTopics: [...p.completedTopics, topicId],
+        lastReviewDates: { ...p.lastReviewDates, [topicId]: new Date().toISOString() },
+      };
     });
   }, []);
 
@@ -114,7 +120,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const weakTopics = Object.entries(newScores)
         .filter(([, s]) => s < 50)
         .map(([id]) => id);
-      return { ...p, topicScores: newScores, weakTopics: weakTopics };
+      return {
+        ...p,
+        topicScores: newScores,
+        weakTopics: weakTopics,
+        lastReviewDates: { ...p.lastReviewDates, [topicId]: new Date().toISOString() },
+      };
     });
   }, []);
 
@@ -152,6 +163,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     return progress.weakTopics;
   }, [progress.weakTopics]);
 
+  const getLastReviewDate = useCallback((topicId: string): string | null => {
+    return progress.lastReviewDates[topicId] ?? null;
+  }, [progress.lastReviewDates]);
+
   const resetProgress = useCallback(() => {
     setProgress({ ...defaultProgress });
     localStorage.removeItem(STORAGE_KEY);
@@ -170,6 +185,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       getModuleProgress,
       getOverallProgress,
       getWeakTopics,
+      getLastReviewDate,
       resetProgress,
     }}>
       {children}
