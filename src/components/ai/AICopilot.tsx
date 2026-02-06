@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff } from 'lucide-react';
+import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff, Github } from 'lucide-react';
 import type { ChatMessage } from '../../types';
-import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig } from '../../utils/aiProvider';
+import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource } from '../../utils/aiProvider';
 import type { AIProvider } from '../../utils/aiProvider';
 
 interface AICopilotProps {
@@ -33,7 +33,7 @@ function getFallbackResponse(userMessage: string): string {
     return '```java\nList<String> namen = List.of("Anna", "Bob", "Charlie");\nnamen.stream()\n    .filter(n -> n.length() > 3)\n    .map(String::toUpperCase)\n    .forEach(System.out::println);\n```\nKernoperationen: `filter`, `map`, `reduce`, `collect`';
   if (lower.includes('interface'))
     return '```java\ninterface Fahrbar {\n    void fahren();\n    default void hupen() { System.out.println("Huup!"); }\n}\nclass Auto implements Fahrbar {\n    public void fahren() { ... }\n}\n```\nInterfaces definieren Verträge. Seit Java 8 mit `default`-Methoden.';
-  return 'Stelle mir eine spezifischere Frage zu einem Java-Konzept!\n\n💡 **Tipp**: Frage nach Variablen, Schleifen, Klassen, Arrays, Streams, Interfaces, Exceptions oder bitte um Hilfe bei einer Aufgabe.\n\n⚡ Für bessere Antworten: Konfiguriere eine AI-API in den Einstellungen (⚙️ oben).';
+  return 'Stelle mir eine spezifischere Frage zu einem Java-Konzept!\n\nTipp: Frage nach Variablen, Schleifen, Klassen, Arrays, Streams, Interfaces, Exceptions oder bitte um Hilfe bei einer Aufgabe.\n\nFür AI-Antworten: Logge dich mit GitHub ein (oben rechts).';
 }
 
 export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
@@ -48,10 +48,12 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [aiActive, setAiActive] = useState(isAIConfigured());
   const [settingsKey, setSettingsKey] = useState('');
   const [settingsProvider, setSettingsProvider] = useState<AIProvider>('openai');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const aiSource = getAISource();
+  const aiActive = isAIConfigured();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -60,8 +62,8 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   useEffect(() => {
     if (showSettings) {
       const config = getAIConfig();
-      setSettingsKey(config.apiKey);
-      setSettingsProvider(config.provider === 'none' ? 'openai' : config.provider);
+      setSettingsKey(config.provider === 'github' ? '' : config.apiKey);
+      setSettingsProvider(config.provider === 'github' || config.provider === 'none' ? 'openai' : config.provider);
     }
   }, [showSettings]);
 
@@ -90,7 +92,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
         chatHistory.push({ role: 'user', content: text.trim() });
         response = await sendToAI(chatHistory);
       } catch (e) {
-        response = `⚠️ API-Fehler: ${e instanceof Error ? e.message : 'Unbekannter Fehler'}\n\nFallback-Antwort:\n\n${getFallbackResponse(text)}`;
+        response = `API-Fehler: ${e instanceof Error ? e.message : 'Unbekannter Fehler'}\n\nFallback-Antwort:\n\n${getFallbackResponse(text)}`;
       }
     } else {
       await new Promise(r => setTimeout(r, 500 + Math.random() * 500));
@@ -111,15 +113,19 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const handleSaveSettings = () => {
     if (settingsKey.trim()) {
       setAIConfig(settingsProvider, settingsKey.trim());
-      setAiActive(true);
     } else {
       clearAIConfig();
-      setAiActive(false);
     }
     setShowSettings(false);
   };
 
   if (!isOpen) return null;
+
+  const statusLabel = aiSource === 'github'
+    ? 'GitHub Models'
+    : aiSource === 'manual'
+    ? 'Eigener API-Key'
+    : 'Offline-Modus';
 
   return (
     <div className="w-80 bg-dark-800 border-l border-dark-600 flex flex-col h-full animate-slide-in shrink-0">
@@ -127,9 +133,13 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
         <div className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-accent-blue" />
           <span className="font-medium text-dark-100 text-sm">AI Java-Tutor</span>
-          <span title={aiActive ? 'AI API aktiv' : 'Offline-Modus'}>
+          <span title={statusLabel}>
             {aiActive ? (
-              <Zap className="w-3 h-3 text-accent-green" />
+              aiSource === 'github' ? (
+                <Github className="w-3 h-3 text-accent-green" />
+              ) : (
+                <Zap className="w-3 h-3 text-accent-green" />
+              )
             ) : (
               <WifiOff className="w-3 h-3 text-dark-500" />
             )}
@@ -146,8 +156,14 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
       </div>
 
       {showSettings && (
-        <div className="p-3 border-b border-dark-600 bg-dark-750 space-y-2">
-          <p className="text-xs text-dark-300 font-medium">AI-Provider konfigurieren</p>
+        <div className="p-3 border-b border-dark-600 bg-dark-700/50 space-y-2">
+          {aiSource === 'github' && (
+            <div className="flex items-center gap-2 p-2 rounded bg-accent-green/10 border border-accent-green/20">
+              <Github className="w-3.5 h-3.5 text-accent-green shrink-0" />
+              <span className="text-xs text-accent-green">AI aktiv via GitHub Models (automatisch)</span>
+            </div>
+          )}
+          <p className="text-xs text-dark-400">Eigenen API-Key nutzen (optional, überschreibt GitHub):</p>
           <select
             value={settingsProvider}
             onChange={e => setSettingsProvider(e.target.value as AIProvider)}
@@ -167,10 +183,18 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
             <button onClick={handleSaveSettings} className="flex-1 bg-accent-blue/20 text-accent-blue text-xs py-1 rounded hover:bg-accent-blue/30">
               Speichern
             </button>
-            <button onClick={() => { clearAIConfig(); setAiActive(false); setShowSettings(false); }} className="text-dark-400 text-xs py-1 px-2 rounded hover:bg-dark-600">
-              Deaktivieren
+            <button onClick={() => { clearAIConfig(); setShowSettings(false); }} className="text-dark-400 text-xs py-1 px-2 rounded hover:bg-dark-600">
+              Zurücksetzen
             </button>
           </div>
+        </div>
+      )}
+
+      {!aiActive && (
+        <div className="px-3 py-2 border-b border-dark-600 bg-accent-orange/5">
+          <p className="text-xs text-dark-400">
+            Für AI-Antworten: Mit GitHub einloggen (oben rechts) oder API-Key in den Einstellungen konfigurieren.
+          </p>
         </div>
       )}
 

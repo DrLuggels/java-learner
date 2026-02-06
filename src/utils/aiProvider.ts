@@ -1,13 +1,33 @@
 const AI_KEY_STORAGE = 'javapath-ai-key';
 const AI_PROVIDER_STORAGE = 'javapath-ai-provider';
 
-export type AIProvider = 'openai' | 'custom' | 'none';
+const GITHUB_MODELS_ENDPOINT = 'https://models.inference.ai.azure.com/chat/completions';
+const GITHUB_MODELS_MODEL = 'gpt-4o-mini';
 
-export function getAIConfig(): { provider: AIProvider; apiKey: string; endpoint: string } {
-  const provider = (localStorage.getItem(AI_PROVIDER_STORAGE) || 'none') as AIProvider;
-  const apiKey = localStorage.getItem(AI_KEY_STORAGE) || '';
-  const endpoint = localStorage.getItem('javapath-ai-endpoint') || 'https://api.openai.com/v1/chat/completions';
-  return { provider, apiKey, endpoint };
+export type AIProvider = 'github' | 'openai' | 'custom' | 'none';
+
+// Check if user is logged in via GitHub (has a token stored)
+function getGitHubToken(): string | null {
+  return localStorage.getItem('gh-token');
+}
+
+export function getAIConfig(): { provider: AIProvider; apiKey: string; endpoint: string; model: string } {
+  // Manual config takes priority
+  const manualProvider = localStorage.getItem(AI_PROVIDER_STORAGE) as AIProvider | null;
+  const manualKey = localStorage.getItem(AI_KEY_STORAGE) || '';
+
+  if (manualProvider && manualProvider !== 'none' && manualKey) {
+    const endpoint = localStorage.getItem('javapath-ai-endpoint') || 'https://api.openai.com/v1/chat/completions';
+    return { provider: manualProvider, apiKey: manualKey, endpoint, model: 'gpt-4o-mini' };
+  }
+
+  // Auto-detect: GitHub login → use GitHub Models API
+  const ghToken = getGitHubToken();
+  if (ghToken) {
+    return { provider: 'github', apiKey: ghToken, endpoint: GITHUB_MODELS_ENDPOINT, model: GITHUB_MODELS_MODEL };
+  }
+
+  return { provider: 'none', apiKey: '', endpoint: '', model: '' };
 }
 
 export function setAIConfig(provider: AIProvider, apiKey: string, endpoint?: string) {
@@ -23,8 +43,16 @@ export function clearAIConfig() {
 }
 
 export function isAIConfigured(): boolean {
-  const { provider, apiKey } = getAIConfig();
-  return provider !== 'none' && apiKey.length > 0;
+  const { provider } = getAIConfig();
+  return provider !== 'none';
+}
+
+export function getAISource(): 'github' | 'manual' | 'none' {
+  const manualProvider = localStorage.getItem(AI_PROVIDER_STORAGE) as AIProvider | null;
+  const manualKey = localStorage.getItem(AI_KEY_STORAGE) || '';
+  if (manualProvider && manualProvider !== 'none' && manualKey) return 'manual';
+  if (getGitHubToken()) return 'github';
+  return 'none';
 }
 
 const SYSTEM_PROMPT = `Du bist ein freundlicher Java-Tutor für Anfänger. Du hilfst Studenten beim Lernen von Java 21.
@@ -43,7 +71,7 @@ export async function sendToAI(
   messages: { role: 'user' | 'assistant' | 'system'; content: string }[],
   context?: string
 ): Promise<string> {
-  const { provider, apiKey, endpoint } = getAIConfig();
+  const { provider, apiKey, endpoint, model } = getAIConfig();
 
   if (provider === 'none' || !apiKey) {
     throw new Error('AI not configured');
@@ -61,7 +89,7 @@ export async function sendToAI(
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: provider === 'openai' ? 'gpt-4o-mini' : 'gpt-4o-mini',
+      model,
       messages: [...systemMessages, ...messages],
       max_tokens: 500,
       temperature: 0.7,
