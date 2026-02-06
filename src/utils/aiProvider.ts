@@ -42,7 +42,7 @@ export function getAIConfig(): { provider: AIProvider; apiKey: string; endpoint:
   // Auto: GitHub token → try Copilot first, fallback to Models
   const ghToken = getGitHubToken();
   if (ghToken) {
-    const preferredApi = localStorage.getItem('javapath-ai-api') || 'copilot';
+    const preferredApi = localStorage.getItem('javapath-ai-api') || 'github-models';
     if (preferredApi === 'copilot') {
       return { provider: 'copilot', apiKey: ghToken, endpoint: COPILOT_ENDPOINT, model: getSelectedModel() };
     }
@@ -75,7 +75,7 @@ export function getAISource(): 'copilot' | 'github-models' | 'manual' | 'none' {
   if (manualProvider && manualProvider !== 'none' && manualKey) return 'manual';
   const ghToken = getGitHubToken();
   if (ghToken) {
-    const preferredApi = localStorage.getItem('javapath-ai-api') || 'copilot';
+    const preferredApi = localStorage.getItem('javapath-ai-api') || 'github-models';
     return preferredApi === 'copilot' ? 'copilot' : 'github-models';
   }
   return 'none';
