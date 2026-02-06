@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff, Github } from 'lucide-react';
 import type { ChatMessage } from '../../types';
-import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource, fetchAvailableModels, getSelectedModel, setSelectedModel } from '../../utils/aiProvider';
+import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource, fetchAvailableModels, getSelectedModel, setSelectedModel, getPreferredApi, setPreferredApi } from '../../utils/aiProvider';
 import type { ModelInfo } from '../../utils/aiProvider';
 import { getTopicById } from '../../data/curriculum';
 import { getExerciseById } from '../../data/exercises';
@@ -57,6 +57,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [currentModel, setCurrentModel] = useState(getSelectedModel());
   const [modelsLoading, setModelsLoading] = useState(false);
+  const [apiMode, setApiMode] = useState(getPreferredApi());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const location = useLocation();
@@ -104,10 +105,9 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   useEffect(() => {
     if (showSettings) {
       const config = getAIConfig();
-      setSettingsKey(config.provider === 'github' ? '' : config.apiKey);
-      setSettingsProvider(config.provider === 'github' || config.provider === 'none' ? 'openai' : config.provider);
-      setModelsLoading(true);
-      fetchAvailableModels().then(m => { setModels(m); setModelsLoading(false); });
+      setSettingsKey(config.provider === 'copilot' || config.provider === 'github-models' ? '' : config.apiKey);
+      setSettingsProvider(config.provider === 'copilot' || config.provider === 'github-models' || config.provider === 'none' ? 'openai' : config.provider);
+      loadModels();
     }
   }, [showSettings]);
 
@@ -163,9 +163,22 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
     setShowSettings(false);
   };
 
+  const loadModels = () => {
+    setModelsLoading(true);
+    fetchAvailableModels().then(m => { setModels(m); setModelsLoading(false); });
+  };
+
+  const handleApiModeChange = (mode: 'copilot' | 'github-models') => {
+    setApiMode(mode);
+    setPreferredApi(mode);
+    loadModels();
+  };
+
   if (!isOpen) return null;
 
-  const statusLabel = aiSource === 'github'
+  const statusLabel = aiSource === 'copilot'
+    ? `Copilot · ${currentModel}`
+    : aiSource === 'github-models'
     ? `GitHub Models · ${currentModel}`
     : aiSource === 'manual'
     ? 'Eigener API-Key'
@@ -179,7 +192,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
           <span className="font-medium text-dark-100 text-sm">AI Java-Tutor</span>
           <span title={statusLabel}>
             {aiActive ? (
-              aiSource === 'github' ? (
+              aiSource === 'copilot' || aiSource === 'github-models' ? (
                 <Github className="w-3 h-3 text-accent-green" />
               ) : (
                 <Zap className="w-3 h-3 text-accent-green" />
@@ -201,11 +214,30 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
 
       {showSettings && (
         <div className="p-3 border-b border-dark-600 bg-dark-700/50 space-y-2">
-          {aiSource === 'github' && (
-            <div className="flex items-center gap-2 p-2 rounded bg-accent-green/10 border border-accent-green/20">
-              <Github className="w-3.5 h-3.5 text-accent-green shrink-0" />
-              <span className="text-xs text-accent-green">AI aktiv via GitHub Models</span>
-            </div>
+          {(aiSource === 'copilot' || aiSource === 'github-models') && (
+            <>
+              <div className="flex items-center gap-2 p-2 rounded bg-accent-green/10 border border-accent-green/20">
+                <Github className="w-3.5 h-3.5 text-accent-green shrink-0" />
+                <span className="text-xs text-accent-green">AI aktiv via {aiSource === 'copilot' ? 'Copilot' : 'GitHub Models'}</span>
+              </div>
+              <div>
+                <p className="text-xs text-dark-300 font-medium mb-1">API:</p>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => handleApiModeChange('copilot')}
+                    className={`flex-1 text-xs py-1 rounded transition-colors ${apiMode === 'copilot' ? 'bg-accent-blue/20 text-accent-blue border border-accent-blue/30' : 'bg-dark-700 text-dark-400 hover:text-dark-200'}`}
+                  >
+                    Copilot (Claude, GPT, Gemini)
+                  </button>
+                  <button
+                    onClick={() => handleApiModeChange('github-models')}
+                    className={`flex-1 text-xs py-1 rounded transition-colors ${apiMode === 'github-models' ? 'bg-accent-blue/20 text-accent-blue border border-accent-blue/30' : 'bg-dark-700 text-dark-400 hover:text-dark-200'}`}
+                  >
+                    GitHub Models (Frei)
+                  </button>
+                </div>
+              </div>
+            </>
           )}
           <div>
             <p className="text-xs text-dark-300 font-medium mb-1">Modell:</p>

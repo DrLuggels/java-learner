@@ -6,7 +6,7 @@ interface LoginModalProps {
   onLogin: (token: string) => Promise<boolean>;
 }
 
-const TOKEN_URL = 'https://github.com/settings/tokens/new?description=JavaPath&scopes=gist';
+const TOKEN_URL = 'https://github.com/settings/tokens/new?description=JavaPath&scopes=gist,copilot';
 
 export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
   const [token, setToken] = useState('');
