@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff, Github } from 'lucide-react';
 import type { ChatMessage } from '../../types';
-import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource } from '../../utils/aiProvider';
+import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource, fetchAvailableModels, getSelectedModel, setSelectedModel } from '../../utils/aiProvider';
+import type { ModelInfo } from '../../utils/aiProvider';
 import type { AIProvider } from '../../utils/aiProvider';
 
 interface AICopilotProps {
@@ -50,6 +51,9 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [settingsKey, setSettingsKey] = useState('');
   const [settingsProvider, setSettingsProvider] = useState<AIProvider>('openai');
+  const [models, setModels] = useState<ModelInfo[]>([]);
+  const [currentModel, setCurrentModel] = useState(getSelectedModel());
+  const [modelsLoading, setModelsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const aiSource = getAISource();
@@ -64,6 +68,8 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
       const config = getAIConfig();
       setSettingsKey(config.provider === 'github' ? '' : config.apiKey);
       setSettingsProvider(config.provider === 'github' || config.provider === 'none' ? 'openai' : config.provider);
+      setModelsLoading(true);
+      fetchAvailableModels().then(m => { setModels(m); setModelsLoading(false); });
     }
   }, [showSettings]);
 
@@ -122,7 +128,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   if (!isOpen) return null;
 
   const statusLabel = aiSource === 'github'
-    ? 'GitHub Models'
+    ? `GitHub Models · ${currentModel}`
     : aiSource === 'manual'
     ? 'Eigener API-Key'
     : 'Offline-Modus';
@@ -160,9 +166,30 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
           {aiSource === 'github' && (
             <div className="flex items-center gap-2 p-2 rounded bg-accent-green/10 border border-accent-green/20">
               <Github className="w-3.5 h-3.5 text-accent-green shrink-0" />
-              <span className="text-xs text-accent-green">AI aktiv via GitHub Models (automatisch)</span>
+              <span className="text-xs text-accent-green">AI aktiv via GitHub Models</span>
             </div>
           )}
+          <div>
+            <p className="text-xs text-dark-300 font-medium mb-1">Modell:</p>
+            {modelsLoading ? (
+              <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-dark-400">
+                <span className="animate-spin w-3 h-3 border border-dark-400 border-t-transparent rounded-full" />
+                Modelle laden...
+              </div>
+            ) : (
+              <select
+                value={currentModel}
+                onChange={e => { setCurrentModel(e.target.value); setSelectedModel(e.target.value); }}
+                className="w-full bg-dark-700 border border-dark-600 rounded px-2 py-1 text-xs text-dark-200"
+              >
+                {models.map(m => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}{m.publisher ? ` (${m.publisher})` : ''}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
           <p className="text-xs text-dark-400">Eigenen API-Key nutzen (optional, überschreibt GitHub):</p>
           <select
             value={settingsProvider}

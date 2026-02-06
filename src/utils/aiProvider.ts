@@ -2,9 +2,72 @@ const AI_KEY_STORAGE = 'javapath-ai-key';
 const AI_PROVIDER_STORAGE = 'javapath-ai-provider';
 
 const GITHUB_MODELS_ENDPOINT = 'https://models.inference.ai.azure.com/chat/completions';
-const GITHUB_MODELS_MODEL = 'gpt-4o-mini';
+const MODEL_STORAGE = 'javapath-ai-model';
 
 export type AIProvider = 'github' | 'openai' | 'custom' | 'none';
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  publisher: string;
+}
+
+const MODELS_CACHE_KEY = 'javapath-models-cache';
+const MODELS_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+export async function fetchAvailableModels(): Promise<ModelInfo[]> {
+  // Check cache first
+  const cached = localStorage.getItem(MODELS_CACHE_KEY);
+  if (cached) {
+    try {
+      const { models, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < MODELS_CACHE_TTL) return models;
+    } catch { /* ignore */ }
+  }
+
+  const token = localStorage.getItem('gh-token');
+  if (!token) return FALLBACK_MODELS;
+
+  try {
+    const res = await fetch('https://models.inference.ai.azure.com/models', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!res.ok) return FALLBACK_MODELS;
+
+    const data = await res.json();
+    const models: ModelInfo[] = (data.data || data || [])
+      .filter((m: { id?: string }) => m.id)
+      .map((m: { id: string; name?: string; owned_by?: string; publisher?: string }) => ({
+        id: m.id,
+        name: m.name || m.id,
+        publisher: m.owned_by || m.publisher || '',
+      }))
+      .sort((a: ModelInfo, b: ModelInfo) => a.name.localeCompare(b.name));
+
+    if (models.length > 0) {
+      localStorage.setItem(MODELS_CACHE_KEY, JSON.stringify({ models, timestamp: Date.now() }));
+      return models;
+    }
+    return FALLBACK_MODELS;
+  } catch {
+    return FALLBACK_MODELS;
+  }
+}
+
+const FALLBACK_MODELS: ModelInfo[] = [
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', publisher: 'OpenAI' },
+  { id: 'gpt-4o', name: 'GPT-4o', publisher: 'OpenAI' },
+  { id: 'gpt-4.1', name: 'GPT-4.1', publisher: 'OpenAI' },
+  { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', publisher: 'OpenAI' },
+];
+
+export function getSelectedModel(): string {
+  return localStorage.getItem(MODEL_STORAGE) || 'gpt-4o-mini';
+}
+
+export function setSelectedModel(model: string) {
+  localStorage.setItem(MODEL_STORAGE, model);
+}
 
 // Check if user is logged in via GitHub (has a token stored)
 function getGitHubToken(): string | null {
@@ -24,7 +87,7 @@ export function getAIConfig(): { provider: AIProvider; apiKey: string; endpoint:
   // Auto-detect: GitHub login → use GitHub Models API
   const ghToken = getGitHubToken();
   if (ghToken) {
-    return { provider: 'github', apiKey: ghToken, endpoint: GITHUB_MODELS_ENDPOINT, model: GITHUB_MODELS_MODEL };
+    return { provider: 'github', apiKey: ghToken, endpoint: GITHUB_MODELS_ENDPOINT, model: getSelectedModel() };
   }
 
   return { provider: 'none', apiKey: '', endpoint: '', model: '' };
