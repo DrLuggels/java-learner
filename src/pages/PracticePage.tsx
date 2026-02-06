@@ -1,8 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   ChevronRight, CheckCircle2, XCircle, Lightbulb,
-  Eye, EyeOff, ArrowLeft, Trophy
+  Eye, EyeOff, ArrowLeft, Trophy, GripVertical
 } from 'lucide-react';
 import CodeEditor from '../components/editor/CodeEditor';
 import { useProgress } from '../hooks/useProgress';
@@ -19,6 +19,39 @@ export default function PracticePage() {
   const [testResult, setTestResult] = useState<'pass' | 'fail' | null>(null);
   const [attempts, setAttempts] = useState(0);
   const [startTime] = useState(Date.now());
+
+  // Resizable split state
+  const [splitPercent, setSplitPercent] = useState(45);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const isDragging = useRef(false);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging.current || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const newPercent = ((e.clientX - rect.left) / rect.width) * 100;
+    setSplitPercent(Math.min(Math.max(newPercent, 20), 80));
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    isDragging.current = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  const handleDragStart = () => {
+    isDragging.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   if (!exercise) {
     return (
@@ -71,9 +104,12 @@ export default function PracticePage() {
   };
 
   return (
-    <div className="h-full flex flex-col lg:flex-row overflow-hidden animate-fade-in">
+    <div ref={containerRef} className="h-full flex flex-col lg:flex-row overflow-hidden animate-fade-in">
       {/* Left: Task Description */}
-      <div className="lg:w-[45%] overflow-y-auto p-6 border-b lg:border-b-0 lg:border-r border-dark-600">
+      <div
+        className="lg:overflow-y-auto overflow-y-auto p-6 border-b lg:border-b-0 lg:border-r border-dark-600 min-h-[200px] lg:min-h-0"
+        style={{ flex: `0 0 ${splitPercent}%` }}
+      >
         <Link to="/" className="flex items-center gap-1 text-sm text-dark-400 hover:text-dark-200 mb-4">
           <ArrowLeft className="w-3.5 h-3.5" /> Zurück
         </Link>
@@ -182,12 +218,20 @@ export default function PracticePage() {
         )}
       </div>
 
+      {/* Resize Handle */}
+      <div
+        className="hidden lg:flex items-center justify-center w-2 cursor-col-resize hover:bg-accent-blue/20 active:bg-accent-blue/30 transition-colors group shrink-0"
+        onMouseDown={handleDragStart}
+      >
+        <GripVertical className="w-3 h-3 text-dark-500 group-hover:text-accent-blue transition-colors" />
+      </div>
+
       {/* Right: Code Editor */}
-      <div className="lg:w-[55%] flex flex-col overflow-hidden">
-        <div className="flex-1 p-4 overflow-hidden flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 min-h-[300px] lg:min-h-0">
+        <div className="flex-1 p-4 overflow-hidden flex flex-col min-h-0">
           {/* Test Result Banner */}
           {testResult && (
-            <div className={`mb-3 p-3 rounded-lg flex items-center gap-2 ${
+            <div className={`mb-3 p-3 rounded-lg flex items-center gap-2 shrink-0 ${
               testResult === 'pass' ? 'success-box' : 'warning-box'
             }`}>
               {testResult === 'pass' ? (
@@ -204,7 +248,7 @@ export default function PracticePage() {
             </div>
           )}
 
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 min-w-0">
             <CodeEditor
               initialCode={savedCode || exercise.starterCode}
               onCodeChange={handleCodeChange}

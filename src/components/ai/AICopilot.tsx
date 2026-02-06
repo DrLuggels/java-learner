@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Sparkles, Lightbulb } from 'lucide-react';
+import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff } from 'lucide-react';
 import type { ChatMessage } from '../../types';
+import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig } from '../../utils/aiProvider';
+import type { AIProvider } from '../../utils/aiProvider';
 
 interface AICopilotProps {
   isOpen: boolean;
@@ -11,6 +13,28 @@ const quickActions = [
   { label: 'Konzept erklären', icon: Lightbulb, prompt: 'Erkläre mir das aktuelle Konzept einfach und verständlich.' },
   { label: 'Hilfe bei Aufgabe', icon: Sparkles, prompt: 'Ich brauche einen Hinweis für die aktuelle Aufgabe, ohne die Lösung zu verraten.' },
 ];
+
+// Fallback responses for when no AI API is configured
+function getFallbackResponse(userMessage: string): string {
+  const lower = userMessage.toLowerCase();
+  if (lower.includes('variable') || lower.includes('datenobjekt'))
+    return 'Eine **Variable** in Java ist wie eine beschriftete Box.\n\n```java\nint alter = 25;\nString name = "Max";\nfinal double PI = 3.14159;\n```\n\nJede Variable hat: **Datentyp**, **Name**, **Wert**.';
+  if (lower.includes('schleife') || lower.includes('loop'))
+    return '**for** - Anzahl bekannt:\n```java\nfor (int i = 0; i < 5; i++) { ... }\n```\n**while** - Bedingung:\n```java\nwhile (x > 0) { ... }\n```\n**for-each** - Collections:\n```java\nfor (String s : liste) { ... }\n```';
+  if (lower.includes('klasse') || lower.includes('class') || lower.includes('oop'))
+    return 'Eine **Klasse** ist ein Bauplan:\n```java\npublic class Auto {\n    private String marke;\n    public Auto(String marke) { this.marke = marke; }\n    public void fahren() { ... }\n}\nAuto a = new Auto("BMW");\n```';
+  if (lower.includes('array'))
+    return '```java\nint[] zahlen = {1, 2, 3, 4, 5};\nString[] namen = new String[3];\nfor (String n : namen) { ... }\n```\nArrays starten bei Index 0 und haben feste Größe. Flexible Größe? → `ArrayList`';
+  if (lower.includes('hinweis') || lower.includes('hilfe') || lower.includes('tipp'))
+    return '1. Lies die Aufgabe nochmal genau\n2. Zerlege das Problem in kleine Schritte\n3. Schreib erst Pseudocode\n4. Teste Schritt für Schritt\n\nWelches Konzept bereitet dir Schwierigkeiten?';
+  if (lower.includes('fehler') || lower.includes('error') || lower.includes('exception'))
+    return '**Kompilierfehler**: Syntax (Semikolon, Typo)\n**Laufzeitfehler**: NullPointer, ArrayIndex\n**Logikfehler**: Falsches Ergebnis\n\nTipp: Lies die Fehlermeldung genau - Zeile und Fehlertyp!';
+  if (lower.includes('stream'))
+    return '```java\nList<String> namen = List.of("Anna", "Bob", "Charlie");\nnamen.stream()\n    .filter(n -> n.length() > 3)\n    .map(String::toUpperCase)\n    .forEach(System.out::println);\n```\nKernoperationen: `filter`, `map`, `reduce`, `collect`';
+  if (lower.includes('interface'))
+    return '```java\ninterface Fahrbar {\n    void fahren();\n    default void hupen() { System.out.println("Huup!"); }\n}\nclass Auto implements Fahrbar {\n    public void fahren() { ... }\n}\n```\nInterfaces definieren Verträge. Seit Java 8 mit `default`-Methoden.';
+  return 'Stelle mir eine spezifischere Frage zu einem Java-Konzept!\n\n💡 **Tipp**: Frage nach Variablen, Schleifen, Klassen, Arrays, Streams, Interfaces, Exceptions oder bitte um Hilfe bei einer Aufgabe.\n\n⚡ Für bessere Antworten: Konfiguriere eine AI-API in den Einstellungen (⚙️ oben).';
+}
 
 export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -23,38 +47,23 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [aiActive, setAiActive] = useState(isAIConfigured());
+  const [settingsKey, setSettingsKey] = useState('');
+  const [settingsProvider, setSettingsProvider] = useState<AIProvider>('openai');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const generateResponse = async (userMessage: string): Promise<string> => {
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 1200));
-
-    const lower = userMessage.toLowerCase();
-
-    if (lower.includes('variable') || lower.includes('datenobjekt')) {
-      return 'Eine **Variable** in Java ist wie eine beschriftete Box, in der du einen Wert speichern kannst.\n\n```java\nint alter = 25; // Box "alter" enthält 25\nString name = "Max"; // Box "name" enthält "Max"\n```\n\nJede Variable hat:\n- Einen **Datentyp** (was reinpasst)\n- Einen **Namen** (das Etikett)\n- Einen **Wert** (der Inhalt)\n\nMit `final` machst du eine Variable unveränderlich (Konstante):\n```java\nfinal double PI = 3.14159;\n```';
+  useEffect(() => {
+    if (showSettings) {
+      const config = getAIConfig();
+      setSettingsKey(config.apiKey);
+      setSettingsProvider(config.provider === 'none' ? 'openai' : config.provider);
     }
-    if (lower.includes('schleife') || lower.includes('loop')) {
-      return 'Schleifen wiederholen Code-Blöcke. Java hat 3 Hauptarten:\n\n**for** - wenn du die Anzahl kennst:\n```java\nfor (int i = 0; i < 5; i++) {\n    System.out.println(i);\n}\n```\n\n**while** - solange Bedingung wahr:\n```java\nwhile (eingabe != 0) {\n    // tue etwas\n}\n```\n\n**do-while** - mindestens 1x ausführen:\n```java\ndo {\n    // tue etwas\n} while (bedingung);\n```\n\n**Tipp:** `for` für Zähler, `while` für Bedingungen, `for-each` für Collections!';
-    }
-    if (lower.includes('klasse') || lower.includes('class') || lower.includes('oop')) {
-      return 'Eine **Klasse** ist wie ein Bauplan für Objekte.\n\n```java\npublic class Auto {\n    private String marke;    // Eigenschaft\n    private int kmStand;     // Eigenschaft\n    \n    public Auto(String marke) {  // Konstruktor\n        this.marke = marke;\n        this.kmStand = 0;\n    }\n    \n    public void fahren(int km) { // Methode\n        this.kmStand += km;\n    }\n}\n```\n\nEine Klasse definiert:\n- **Attribute** (Eigenschaften)\n- **Methoden** (Verhalten)\n- **Konstruktoren** (Initialisierung)\n\nObjekte werden mit `new` erzeugt:\n```java\nAuto meinAuto = new Auto("BMW");\n```';
-    }
-    if (lower.includes('array')) {
-      return 'Ein **Array** speichert mehrere Werte gleichen Typs in einer festen Größe.\n\n```java\n// Deklaration und Initialisierung\nint[] zahlen = new int[5];\nzahlen[0] = 10;\n\n// Oder direkt\nString[] namen = {"Max", "Anna", "Tom"};\n\n// Durchlaufen mit for-each\nfor (String name : namen) {\n    System.out.println(name);\n}\n```\n\n**Wichtig:** Arrays starten bei Index 0 und haben eine feste Größe! Brauchst du flexible Größe? Nutze `ArrayList`.';
-    }
-    if (lower.includes('hinweis') || lower.includes('hilfe') || lower.includes('tipp')) {
-      return 'Hier ein allgemeiner Tipp für deine Aufgabe:\n\n1. **Lies die Aufgabe nochmal genau** - was wird gefordert?\n2. **Zerlege das Problem** in kleine Schritte\n3. **Schreib Pseudocode** bevor du Java schreibst\n4. **Teste Schritt für Schritt** - nicht alles auf einmal\n\nWelches Konzept bereitet dir Schwierigkeiten? Dann kann ich gezielter helfen!';
-    }
-    if (lower.includes('fehler') || lower.includes('error') || lower.includes('exception')) {
-      return 'Java-Fehler lassen sich in 3 Kategorien einteilen:\n\n1. **Kompilierfehler** - Syntaxfehler, die der Compiler findet\n   - Semikolon vergessen, Typo im Variablennamen\n\n2. **Laufzeitfehler** (Exceptions) - treten beim Ausführen auf\n   - `NullPointerException` - Variable ist null\n   - `ArrayIndexOutOfBoundsException` - Index zu groß\n\n3. **Logikfehler** - Programm läuft, gibt aber falsches Ergebnis\n   - Am schwersten zu finden!\n\n**Tipp:** Lies die Fehlermeldung genau - sie sagt dir die Zeile und den Fehlertyp!';
-    }
-
-    return 'Gute Frage! Hier sind einige Tipps:\n\n1. Schau dir die aktuelle Lektion nochmal an\n2. Versuche das Konzept in eigenen Worten zu erklären\n3. Experimentiere mit dem Code-Editor\n\nStelle mir gerne eine spezifischere Frage zu einem Java-Konzept, und ich erkläre es dir Schritt für Schritt!';
-  };
+  }, [showSettings]);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -70,7 +79,23 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
     setInput('');
     setIsTyping(true);
 
-    const response = await generateResponse(text);
+    let response: string;
+
+    if (isAIConfigured()) {
+      try {
+        const chatHistory = messages
+          .filter(m => m.id !== '1')
+          .slice(-8)
+          .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+        chatHistory.push({ role: 'user', content: text.trim() });
+        response = await sendToAI(chatHistory);
+      } catch (e) {
+        response = `⚠️ API-Fehler: ${e instanceof Error ? e.message : 'Unbekannter Fehler'}\n\nFallback-Antwort:\n\n${getFallbackResponse(text)}`;
+      }
+    } else {
+      await new Promise(r => setTimeout(r, 500 + Math.random() * 500));
+      response = getFallbackResponse(text);
+    }
 
     const botMsg: ChatMessage = {
       id: (Date.now() + 1).toString(),
@@ -83,6 +108,17 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
     setMessages(prev => [...prev, botMsg]);
   };
 
+  const handleSaveSettings = () => {
+    if (settingsKey.trim()) {
+      setAIConfig(settingsProvider, settingsKey.trim());
+      setAiActive(true);
+    } else {
+      clearAIConfig();
+      setAiActive(false);
+    }
+    setShowSettings(false);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -91,11 +127,52 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
         <div className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-accent-blue" />
           <span className="font-medium text-dark-100 text-sm">AI Java-Tutor</span>
+          <span title={aiActive ? 'AI API aktiv' : 'Offline-Modus'}>
+            {aiActive ? (
+              <Zap className="w-3 h-3 text-accent-green" />
+            ) : (
+              <WifiOff className="w-3 h-3 text-dark-500" />
+            )}
+          </span>
         </div>
-        <button onClick={onClose} className="text-dark-400 hover:text-dark-200 transition-colors">
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setShowSettings(!showSettings)} className="text-dark-400 hover:text-dark-200 transition-colors p-1" title="AI Einstellungen">
+            <Settings className="w-4 h-4" />
+          </button>
+          <button onClick={onClose} className="text-dark-400 hover:text-dark-200 transition-colors p-1">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
+
+      {showSettings && (
+        <div className="p-3 border-b border-dark-600 bg-dark-750 space-y-2">
+          <p className="text-xs text-dark-300 font-medium">AI-Provider konfigurieren</p>
+          <select
+            value={settingsProvider}
+            onChange={e => setSettingsProvider(e.target.value as AIProvider)}
+            className="w-full bg-dark-700 border border-dark-600 rounded px-2 py-1 text-xs text-dark-200"
+          >
+            <option value="openai">OpenAI (GPT-4o-mini)</option>
+            <option value="custom">Benutzerdefiniert</option>
+          </select>
+          <input
+            type="password"
+            value={settingsKey}
+            onChange={e => setSettingsKey(e.target.value)}
+            placeholder="API Key eingeben..."
+            className="w-full bg-dark-700 border border-dark-600 rounded px-2 py-1 text-xs text-dark-200 placeholder:text-dark-500"
+          />
+          <div className="flex gap-2">
+            <button onClick={handleSaveSettings} className="flex-1 bg-accent-blue/20 text-accent-blue text-xs py-1 rounded hover:bg-accent-blue/30">
+              Speichern
+            </button>
+            <button onClick={() => { clearAIConfig(); setAiActive(false); setShowSettings(false); }} className="text-dark-400 text-xs py-1 px-2 rounded hover:bg-dark-600">
+              Deaktivieren
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {messages.map(msg => (

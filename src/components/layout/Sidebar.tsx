@@ -106,7 +106,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   if (!isOpen) return null;
 
   return (
-    <aside className="w-72 bg-dark-800 border-r border-dark-600 flex flex-col h-full overflow-hidden shrink-0">
+    <>
+    <div className="sidebar-mobile-overlay lg:hidden" onClick={onToggle} />
+    <aside className="w-72 bg-dark-800 border-r border-dark-600 flex flex-col h-full overflow-hidden shrink-0 sidebar-mobile lg:relative lg:z-auto">
       <div className="p-4 border-b border-dark-600 flex items-center justify-between">
         <NavLink to="/" className="flex items-center gap-2 text-dark-100 hover:text-accent-blue transition-colors">
           <Coffee className="w-6 h-6 text-accent-orange" />
@@ -225,6 +227,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
       </nav>
     </aside>
+    </>
   );
 }
 

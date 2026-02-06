@@ -47,9 +47,11 @@ export default function CodeEditor({
     onCodeChange?.(newCode);
   };
 
+  const isFullSize = height === '100%';
+
   return (
-    <div className="rounded-lg border border-dark-600 overflow-hidden bg-dark-800">
-      <div className="flex items-center justify-between px-3 py-2 bg-dark-700 border-b border-dark-600">
+    <div className={`rounded-lg border border-dark-600 overflow-hidden bg-dark-800 w-full ${isFullSize ? 'h-full flex flex-col' : ''}`}>
+      <div className="flex items-center justify-between px-3 py-2 bg-dark-700 border-b border-dark-600 shrink-0">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-accent-red/60" />
@@ -90,32 +92,60 @@ export default function CodeEditor({
         </div>
       </div>
 
-      <Editor
-        height={height}
-        defaultLanguage="java"
-        value={code}
-        onChange={handleEditorChange}
-        theme="vs-dark"
-        options={{
-          minimap: { enabled: false },
-          fontSize: 14,
-          fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-          lineNumbers: 'on',
-          scrollBeyondLastLine: false,
-          automaticLayout: true,
-          tabSize: 4,
-          readOnly,
-          wordWrap: 'on',
-          padding: { top: 12 },
-          renderLineHighlight: 'line',
-          cursorBlinking: 'smooth',
-          smoothScrolling: true,
-          bracketPairColorization: { enabled: true },
-        }}
-      />
+      {isFullSize ? (
+        <div className="flex-1 min-h-0">
+          <Editor
+            height="100%"
+            defaultLanguage="java"
+            value={code}
+            onChange={handleEditorChange}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              tabSize: 4,
+              readOnly,
+              wordWrap: 'on',
+              padding: { top: 12 },
+              renderLineHighlight: 'line',
+              cursorBlinking: 'smooth',
+              smoothScrolling: true,
+              bracketPairColorization: { enabled: true },
+            }}
+          />
+        </div>
+      ) : (
+        <Editor
+          height={height}
+          defaultLanguage="java"
+          value={code}
+          onChange={handleEditorChange}
+          theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 4,
+            readOnly,
+            wordWrap: 'on',
+            padding: { top: 12 },
+            renderLineHighlight: 'line',
+            cursorBlinking: 'smooth',
+            smoothScrolling: true,
+            bracketPairColorization: { enabled: true },
+          }}
+        />
+      )}
 
       {output && (
-        <div className="border-t border-dark-600">
+        <div className="border-t border-dark-600 shrink-0">
           <div className="px-3 py-1.5 bg-dark-700 flex items-center gap-2">
             <span className="text-xs font-medium text-dark-400">Ausgabe</span>
             {output.exitCode === 0 ? (

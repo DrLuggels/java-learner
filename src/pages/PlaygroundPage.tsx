@@ -25,7 +25,7 @@ export default function PlaygroundPage() {
         <h1 className="text-2xl font-bold text-dark-100">Java Playground</h1>
         <p className="text-dark-400 text-sm">Schreibe und teste Java-Code frei im Browser. Experimentiere mit Konzepten!</p>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 min-w-0">
         <CodeEditor initialCode={defaultCode} height="100%" />
       </div>
     </div>
