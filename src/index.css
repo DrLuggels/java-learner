@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-900: #0d1117;
+  --color-dark-800: #161b22;
+  --color-dark-700: #21262d;
+  --color-dark-600: #30363d;
+  --color-dark-500: #484f58;
+  --color-dark-400: #8b949e;
+  --color-dark-300: #b1bac4;
+  --color-dark-200: #c9d1d9;
+  --color-dark-100: #f0f6fc;
+  --color-accent-blue: #58a6ff;
+  --color-accent-green: #3fb950;
+  --color-accent-orange: #d29922;
+  --color-accent-red: #f85149;
+  --color-accent-purple: #bc8cff;
+  --color-accent-cyan: #39d2c0;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-dark-600) transparent;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-dark-900);
+  color: var(--color-dark-200);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+code, pre, .mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.lesson-content h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-dark-100); }
+.lesson-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--color-dark-100); border-bottom: 1px solid var(--color-dark-600); padding-bottom: 0.5rem; }
+.lesson-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--color-dark-200); }
+.lesson-content p { margin-bottom: 1rem; line-height: 1.8; color: var(--color-dark-300); }
+.lesson-content ul, .lesson-content ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+.lesson-content li { margin-bottom: 0.5rem; line-height: 1.6; color: var(--color-dark-300); }
+.lesson-content code:not(pre code) { background: var(--color-dark-700); padding: 2px 6px; border-radius: 4px; font-size: 0.875em; color: var(--color-accent-cyan); }
+.lesson-content pre { background: var(--color-dark-800); border: 1px solid var(--color-dark-600); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 1rem; }
+.lesson-content pre code { background: none; padding: 0; color: var(--color-dark-200); font-size: 0.875rem; line-height: 1.7; }
+.lesson-content blockquote { border-left: 3px solid var(--color-accent-blue); padding: 0.75rem 1rem; margin-bottom: 1rem; background: rgba(88, 166, 255, 0.05); border-radius: 0 8px 8px 0; }
+.lesson-content blockquote p { color: var(--color-dark-300); margin-bottom: 0; }
+.lesson-content table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.9rem; }
+.lesson-content th, .lesson-content td { border: 1px solid var(--color-dark-600); padding: 10px 14px; text-align: left; }
+.lesson-content th { background: var(--color-dark-700); color: var(--color-dark-100); font-weight: 600; }
+.lesson-content td { background: var(--color-dark-800); }
+.lesson-content strong { color: var(--color-dark-100); }
+.lesson-content a { color: var(--color-accent-blue); text-decoration: none; }
+.lesson-content a:hover { text-decoration: underline; }
+
+.hint-box {
+  background: rgba(88, 166, 255, 0.08);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.warning-box {
+  background: rgba(248, 81, 73, 0.08);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.success-box {
+  background: rgba(63, 185, 80, 0.08);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in { animation: slideIn 0.3s ease forwards; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }

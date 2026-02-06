@@ -1,0 +1,21 @@
+import type { Exercise } from '../../types';
+export const lambdasExercises: Exercise[] = [
+  { id: 'lambdas-01', topicId: 'lambdas', title: 'Liste filtern', difficulty: 'mittel',
+    description: 'Filtere eine Liste von Zahlen mit Predicate-Lambdas.',
+    requirements: ['Filtere gerade Zahlen', 'Filtere Zahlen größer als 5', 'Nutze removeIf mit Lambda'],
+    hints: ['Predicate<Integer> istGerade = n -> n % 2 == 0', 'ArrayList hat removeIf(Predicate)'],
+    starterCode: `import java.util.*;\nimport java.util.function.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        var zahlen = new ArrayList<>(List.of(1,2,3,4,5,6,7,8,9,10));\n        // TODO: Filtere mit Lambdas\n    }\n}`,
+    solutionCode: `import java.util.*;\nimport java.util.function.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        var zahlen = new ArrayList<>(List.of(1,2,3,4,5,6,7,8,9,10));\n        Predicate<Integer> istGerade = n -> n % 2 == 0;\n        System.out.println("Alle: " + zahlen);\n        zahlen.removeIf(n -> n % 2 != 0);\n        System.out.println("Nur gerade: " + zahlen);\n        zahlen.removeIf(n -> n <= 5);\n        System.out.println("Gerade > 5: " + zahlen);\n    }\n}`,
+    expectedOutput: 'Alle: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nNur gerade: [2, 4, 6, 8, 10]\nGerade > 5: [6, 8, 10]',
+    testCases: [{ expectedOutput: 'Nur gerade: [2, 4, 6, 8, 10]', description: 'Gerade gefiltert' }, { expectedOutput: '[6, 8, 10]', description: 'Größer als 5' }],
+  },
+  { id: 'lambdas-02', topicId: 'lambdas', title: 'Function & Consumer', difficulty: 'mittel',
+    description: 'Nutze Function und Consumer Lambdas zur Datentransformation.',
+    requirements: ['Function<String,Integer> für Stringlänge', 'Consumer<String> für formatierte Ausgabe'],
+    hints: ['Function<String,Integer> laenge = String::length (Method Reference!)'],
+    starterCode: `import java.util.*;\nimport java.util.function.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> namen = List.of("Anna", "Bob", "Charlotte");\n        // TODO: Function und Consumer nutzen\n    }\n}`,
+    solutionCode: `import java.util.*;\nimport java.util.function.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> namen = List.of("Anna", "Bob", "Charlotte");\n        Function<String, Integer> laenge = String::length;\n        Consumer<String> ausgabe = n -> System.out.println("- " + n + " (" + laenge.apply(n) + " Zeichen)");\n        namen.forEach(ausgabe);\n    }\n}`,
+    expectedOutput: '- Anna (4 Zeichen)\n- Bob (3 Zeichen)\n- Charlotte (9 Zeichen)',
+    testCases: [{ expectedOutput: 'Anna (4 Zeichen)', description: 'Function korrekt' }, { expectedOutput: 'Charlotte (9 Zeichen)', description: 'Method Reference funktioniert' }],
+  },
+];

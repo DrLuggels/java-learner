@@ -1,0 +1,21 @@
+import type { Exercise } from '../../types';
+export const exceptionsExercises: Exercise[] = [
+  { id: 'exceptions-01', topicId: 'exceptions', title: 'Custom Exception', difficulty: 'mittel',
+    description: 'Erstelle eine eigene InvalidValueException und nutze sie in der Vehicle-Klasse.',
+    requirements: ['InvalidValueException erbt von Exception', 'accelerate() wirft Exception bei negativem Wert', 'Fange die Exception in main()'],
+    hints: ['class InvalidValueException extends Exception', 'throw new InvalidValueException("Nachricht")'],
+    starterCode: `// TODO: class InvalidValueException\n// TODO: class Vehicle mit Validierung\n\npublic class Main {\n    public static void main(String[] args) {\n        // TODO: Exception testen\n    }\n}`,
+    solutionCode: `class InvalidValueException extends Exception {\n    public InvalidValueException(String msg) { super(msg); }\n}\n\nclass Vehicle {\n    private double speed = 0;\n    public void accelerate(int value) throws InvalidValueException {\n        if (value < 0) throw new InvalidValueException("Wert muss groesser als 0 sein!");\n        speed += value;\n        System.out.println("Geschwindigkeit: " + speed + " km/h");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Vehicle v = new Vehicle();\n        try {\n            v.accelerate(50);\n            v.accelerate(-10);\n        } catch (InvalidValueException e) {\n            System.out.println("Fehler: " + e.getMessage());\n        }\n    }\n}`,
+    expectedOutput: 'Geschwindigkeit: 50.0 km/h\nFehler: Wert muss groesser als 0 sein!',
+    testCases: [{ expectedOutput: '50.0', description: 'Gültige Beschleunigung' }, { expectedOutput: 'groesser als 0', description: 'Exception bei negativem Wert' }],
+  },
+  { id: 'exceptions-02', topicId: 'exceptions', title: 'Multi-catch', difficulty: 'mittel',
+    description: 'Demonstriere verschiedene Exception-Typen mit Multi-catch.',
+    requirements: ['Fange ArithmeticException, NumberFormatException und ArrayIndexOutOfBoundsException'],
+    hints: ['Multi-catch: catch (TypeA | TypeB e)'],
+    starterCode: `public class Main {\n    public static void main(String[] args) {\n        // TODO: Verschiedene Exceptions provozieren und fangen\n    }\n}`,
+    solutionCode: `public class Main {\n    public static void main(String[] args) {\n        // Test 1: Division durch Null\n        try {\n            int x = 10 / 0;\n        } catch (ArithmeticException e) {\n            System.out.println("ArithmeticException: " + e.getMessage());\n        }\n        // Test 2: Ungueltige Zahl\n        try {\n            int n = Integer.parseInt("abc");\n        } catch (NumberFormatException e) {\n            System.out.println("NumberFormatException: " + e.getMessage());\n        }\n        // Test 3: Array-Index\n        try {\n            int[] arr = {1, 2};\n            System.out.println(arr[5]);\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println("ArrayIndexOutOfBounds: Index " + e.getMessage());\n        }\n    }\n}`,
+    expectedOutput: 'ArithmeticException: / by zero\nNumberFormatException: For input string: "abc"\nArrayIndexOutOfBounds: Index 5',
+    testCases: [{ expectedOutput: 'ArithmeticException', description: 'Division durch Null gefangen' }, { expectedOutput: 'NumberFormatException', description: 'Ungültige Zahl gefangen' }],
+  },
+];

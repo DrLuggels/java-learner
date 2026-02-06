@@ -1,0 +1,21 @@
+import type { Exercise } from '../../types';
+export const mapsExercises: Exercise[] = [
+  { id: 'maps-01', topicId: 'maps', title: 'Wörterbuch', difficulty: 'leicht',
+    description: 'Erstelle ein deutsch-englisches Wörterbuch mit HashMap.',
+    requirements: ['HashMap<String,String> für Übersetzungen', 'put, get, containsKey demonstrieren'],
+    hints: ['HashMap<String,String> dict = new HashMap<>()', 'dict.put("Hund", "dog")'],
+    starterCode: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // TODO: Woerterbuch erstellen\n    }\n}`,
+    solutionCode: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String,String> dict = new HashMap<>();\n        dict.put("Hund", "dog");\n        dict.put("Katze", "cat");\n        dict.put("Vogel", "bird");\n        System.out.println("Hund = " + dict.get("Hund"));\n        System.out.println("Hat Katze: " + dict.containsKey("Katze"));\n        System.out.println("Alle: " + dict);\n    }\n}`,
+    expectedOutput: 'Hund = dog\nHat Katze: true\nAlle: {Katze=cat, Hund=dog, Vogel=bird}',
+    testCases: [{ expectedOutput: 'dog', description: 'Übersetzung gefunden' }, { expectedOutput: 'true', description: 'containsKey funktioniert' }],
+  },
+  { id: 'maps-02', topicId: 'maps', title: 'Häufigkeitszähler', difficulty: 'mittel',
+    description: 'Zähle die Häufigkeit von Wörtern in einem Text.',
+    requirements: ['Text in Wörter aufteilen mit split', 'HashMap<String,Integer> für Häufigkeiten', 'getOrDefault nutzen'],
+    hints: ['String[] woerter = text.split(" ")', 'map.getOrDefault(wort, 0) + 1'],
+    starterCode: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        String text = "java ist toll java ist einfach toll";\n        // TODO: Worthaeufigkeiten zaehlen\n    }\n}`,
+    solutionCode: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        String text = "java ist toll java ist einfach toll";\n        Map<String,Integer> freq = new HashMap<>();\n        for (String wort : text.split(" ")) {\n            freq.put(wort, freq.getOrDefault(wort, 0) + 1);\n        }\n        freq.forEach((wort, anzahl) -> System.out.println(wort + ": " + anzahl));\n    }\n}`,
+    expectedOutput: 'java: 2\nist: 2\ntoll: 2\neinfach: 1',
+    testCases: [{ expectedOutput: 'java: 2', description: 'java kommt 2x vor' }, { expectedOutput: 'einfach: 1', description: 'einfach kommt 1x vor' }],
+  },
+];
