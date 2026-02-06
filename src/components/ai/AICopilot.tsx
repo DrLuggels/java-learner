@@ -1,8 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { X, Send, Bot, User, Sparkles, Lightbulb, Settings, Zap, WifiOff, Github } from 'lucide-react';
 import type { ChatMessage } from '../../types';
 import { isAIConfigured, sendToAI, setAIConfig, clearAIConfig, getAIConfig, getAISource, fetchAvailableModels, getSelectedModel, setSelectedModel } from '../../utils/aiProvider';
 import type { ModelInfo } from '../../utils/aiProvider';
+import { getTopicById } from '../../data/curriculum';
+import { getExerciseById } from '../../data/exercises';
 import type { AIProvider } from '../../utils/aiProvider';
 
 interface AICopilotProps {
@@ -56,8 +59,43 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
   const [modelsLoading, setModelsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const location = useLocation();
   const aiSource = getAISource();
   const aiActive = isAIConfigured();
+
+  // Build context from current page
+  const pageContext = useMemo(() => {
+    const path = location.pathname;
+    const parts = path.split('/').filter(Boolean);
+
+    // Learn page: /learn/:moduleId/:topicId
+    if (parts[0] === 'learn' && parts[2]) {
+      const topic = getTopicById(parts[2]);
+      if (topic) {
+        return `Der Student ist auf der Lektion "${topic.title}" (Modul: ${parts[1]}).\n\nLektionsinhalt:\n${topic.content.slice(0, 2000)}\n\nSchlüsselkonzepte: ${topic.keyConceptsDE.join(', ')}`;
+      }
+    }
+
+    // Practice page: /practice/:exerciseId
+    if (parts[0] === 'practice' && parts[1]) {
+      const exercise = getExerciseById(parts[1]);
+      if (exercise) {
+        return `Der Student arbeitet an der Übung "${exercise.title}" (${exercise.difficulty}).\n\nAufgabe: ${exercise.description}\n\nAnforderungen:\n${exercise.requirements.join('\n')}\n\nStarter-Code:\n${exercise.starterCode}\n\nErwartete Ausgabe: ${exercise.expectedOutput || 'keine'}`;
+      }
+    }
+
+    // Playground
+    if (parts[0] === 'playground') {
+      return 'Der Student ist im Java Playground und experimentiert frei mit Code.';
+    }
+
+    // Exam
+    if (parts[0] === 'exam') {
+      return `Der Student ist im Klausur-Simulator (${parts[1] || 'Java 1'}). Gib keine direkten Lösungen, nur Denkanstöße.`;
+    }
+
+    return 'Der Student ist auf der Startseite der JavaPath Lernplattform.';
+  }, [location.pathname]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,7 +134,7 @@ export default function AICopilot({ isOpen, onClose }: AICopilotProps) {
           .slice(-8)
           .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
         chatHistory.push({ role: 'user', content: text.trim() });
-        response = await sendToAI(chatHistory);
+        response = await sendToAI(chatHistory, pageContext);
       } catch (e) {
         response = `API-Fehler: ${e instanceof Error ? e.message : 'Unbekannter Fehler'}\n\nFallback-Antwort:\n\n${getFallbackResponse(text)}`;
       }

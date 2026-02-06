@@ -12,11 +12,26 @@ export interface ModelInfo {
   publisher: string;
 }
 
+// Only show well-known chat models, not Azure infrastructure / embedding / image models
+const CHAT_MODEL_KEYWORDS = [
+  'gpt-4', 'gpt-3.5', 'o1', 'o3', 'o4',
+  'llama', 'mistral', 'deepseek',
+  'phi-', 'phi3', 'phi4',
+  'command-r', 'jamba',
+  'codestral', 'pixtral', 'ministral',
+];
+const EXCLUDE_KEYWORDS = ['embed', 'tts', 'whisper', 'dall-e', 'safety', 'shield', 'guard', 'vision'];
+
+function isChatModel(id: string): boolean {
+  const lower = id.toLowerCase();
+  if (EXCLUDE_KEYWORDS.some(k => lower.includes(k))) return false;
+  return CHAT_MODEL_KEYWORDS.some(k => lower.includes(k));
+}
+
 const MODELS_CACHE_KEY = 'javapath-models-cache';
 const MODELS_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 export async function fetchAvailableModels(): Promise<ModelInfo[]> {
-  // Check cache first
   const cached = localStorage.getItem(MODELS_CACHE_KEY);
   if (cached) {
     try {
@@ -35,14 +50,22 @@ export async function fetchAvailableModels(): Promise<ModelInfo[]> {
     if (!res.ok) return FALLBACK_MODELS;
 
     const data = await res.json();
-    const models: ModelInfo[] = (data.data || data || [])
-      .filter((m: { id?: string }) => m.id)
-      .map((m: { id: string; name?: string; owned_by?: string; publisher?: string }) => ({
+    const raw = (data.data || data || []) as { id: string; name?: string; owned_by?: string; publisher?: string }[];
+    const models: ModelInfo[] = raw
+      .filter(m => m.id && isChatModel(m.id))
+      .map(m => ({
         id: m.id,
         name: m.name || m.id,
         publisher: m.owned_by || m.publisher || '',
       }))
-      .sort((a: ModelInfo, b: ModelInfo) => a.name.localeCompare(b.name));
+      .sort((a, b) => {
+        // OpenAI GPT first, then o-series, then rest alphabetical
+        const aIsGpt = a.id.startsWith('gpt');
+        const bIsGpt = b.id.startsWith('gpt');
+        if (aIsGpt && !bIsGpt) return -1;
+        if (!aIsGpt && bIsGpt) return 1;
+        return a.name.localeCompare(b.name);
+      });
 
     if (models.length > 0) {
       localStorage.setItem(MODELS_CACHE_KEY, JSON.stringify({ models, timestamp: Date.now() }));
@@ -57,8 +80,12 @@ export async function fetchAvailableModels(): Promise<ModelInfo[]> {
 const FALLBACK_MODELS: ModelInfo[] = [
   { id: 'gpt-4o-mini', name: 'GPT-4o Mini', publisher: 'OpenAI' },
   { id: 'gpt-4o', name: 'GPT-4o', publisher: 'OpenAI' },
-  { id: 'gpt-4.1', name: 'GPT-4.1', publisher: 'OpenAI' },
   { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', publisher: 'OpenAI' },
+  { id: 'gpt-4.1', name: 'GPT-4.1', publisher: 'OpenAI' },
+  { id: 'o4-mini', name: 'o4-mini', publisher: 'OpenAI' },
+  { id: 'DeepSeek-R1', name: 'DeepSeek R1', publisher: 'DeepSeek' },
+  { id: 'Meta-Llama-3.1-405B-Instruct', name: 'Llama 3.1 405B', publisher: 'Meta' },
+  { id: 'Mistral-Large-2', name: 'Mistral Large 2', publisher: 'Mistral' },
 ];
 
 export function getSelectedModel(): string {
