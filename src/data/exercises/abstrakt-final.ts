@@ -1,0 +1,16 @@
+import type { Exercise } from '../../types';
+export const abstraktFinalExercises: Exercise[] = [
+  { id: 'abstrakt-final-01', topicId: 'abstrakt-final', title: 'Abstrakte Fahrzeugklasse', difficulty: 'mittel',
+    description: 'Erstelle eine abstrakte Klasse Vehicle mit einer finalen Methode getInfo() und einer abstrakten Methode getFuelType(). Leite die Klassen Car, ElectricCar und Bicycle ab. Die finale Methode getInfo() darf nicht ueberschrieben werden und gibt Marke, Modell und Treibstoffart aus.',
+    requirements: ['Abstrakte Klasse Vehicle mit Feldern brand und model', 'Finale Methode getInfo() gibt "brand model (Treibstoff: ...)" zurueck', 'Abstrakte Methode String getFuelType()', 'Klasse Car: getFuelType() gibt "Benzin" zurueck', 'Klasse ElectricCar: getFuelType() gibt "Strom" zurueck', 'Klasse Bicycle: getFuelType() gibt "Muskelkraft" zurueck', 'Finale Klasse Bicycle kann nicht weiter vererbt werden'],
+    hints: ['Eine final-Methode kann in Unterklassen nicht ueberschrieben werden', 'Eine abstract-Methode muss in konkreten Unterklassen implementiert werden', 'Eine final-Klasse kann nicht erweitert werden'],
+    starterCode: `// TODO: Abstrakte Klasse Vehicle\n// TODO: Klasse Car\n// TODO: Klasse ElectricCar\n// TODO: Finale Klasse Bicycle\n\npublic class Main {\n    public static void main(String[] args) {\n        // TODO: Fahrzeuge erstellen und Infos ausgeben\n    }\n}`,
+    solutionCode: `abstract class Vehicle {\n    protected final String brand;\n    protected final String model;\n\n    public Vehicle(String brand, String model) {\n        this.brand = brand;\n        this.model = model;\n    }\n\n    public abstract String getFuelType();\n\n    public final String getInfo() {\n        return brand + " " + model + " (Treibstoff: " + getFuelType() + ")";\n    }\n}\n\nclass Car extends Vehicle {\n    public Car(String brand, String model) {\n        super(brand, model);\n    }\n\n    @Override\n    public String getFuelType() {\n        return "Benzin";\n    }\n}\n\nclass ElectricCar extends Vehicle {\n    public ElectricCar(String brand, String model) {\n        super(brand, model);\n    }\n\n    @Override\n    public String getFuelType() {\n        return "Strom";\n    }\n}\n\nfinal class Bicycle extends Vehicle {\n    public Bicycle(String brand, String model) {\n        super(brand, model);\n    }\n\n    @Override\n    public String getFuelType() {\n        return "Muskelkraft";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Vehicle[] fahrzeuge = {\n            new Car("VW", "Golf"),\n            new ElectricCar("Tesla", "Model 3"),\n            new Bicycle("Canyon", "Roadlite")\n        };\n\n        for (Vehicle v : fahrzeuge) {\n            System.out.println(v.getInfo());\n        }\n    }\n}`,
+    expectedOutput: 'VW Golf (Treibstoff: Benzin)\nTesla Model 3 (Treibstoff: Strom)\nCanyon Roadlite (Treibstoff: Muskelkraft)',
+    testCases: [
+      { expectedOutput: 'VW Golf (Treibstoff: Benzin)', description: 'Auto mit Benzin wird korrekt ausgegeben' },
+      { expectedOutput: 'Tesla Model 3 (Treibstoff: Strom)', description: 'Elektroauto mit Strom wird korrekt ausgegeben' },
+      { expectedOutput: 'Canyon Roadlite (Treibstoff: Muskelkraft)', description: 'Fahrrad mit Muskelkraft wird korrekt ausgegeben' },
+    ],
+  },
+];
