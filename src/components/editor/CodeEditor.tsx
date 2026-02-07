@@ -1,7 +1,9 @@
 import Editor from '@monaco-editor/react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Play, RotateCcw, Loader2, Copy, Check } from 'lucide-react';
 import { useJavaRunner } from '../../hooks/useJavaRunner';
+import { isAIConfigured } from '../../utils/aiProvider';
+import LineExplainPopover from './LineExplainPopover';
 
 interface CodeEditorProps {
   initialCode: string;
@@ -22,7 +24,28 @@ export default function CodeEditor({
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [copied, setCopied] = useState(false);
+  const [explainLine, setExplainLine] = useState<{ line: string; lineNumber: number } | null>(null);
   const { output, isRunning, run, clear } = useJavaRunner();
+  const hasAI = isAIConfigured();
+
+  const handleEditorMount = useCallback((editor: unknown) => {
+    if (!hasAI) return;
+    const ed = editor as { addAction: (action: unknown) => void; getPosition: () => { lineNumber: number } | null; getModel: () => { getLineContent: (n: number) => string } | null };
+    ed.addAction({
+      id: 'explain-line',
+      label: 'Erklaere diese Zeile (AI)',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 99,
+      run: () => {
+        const pos = ed.getPosition();
+        const model = ed.getModel();
+        if (pos && model) {
+          const lineContent = model.getLineContent(pos.lineNumber);
+          setExplainLine({ line: lineContent, lineNumber: pos.lineNumber });
+        }
+      },
+    });
+  }, [hasAI]);
 
   const handleRun = async () => {
     const result = await run(code);
@@ -48,6 +71,14 @@ export default function CodeEditor({
   };
 
   const isFullSize = height === '100%';
+  const editorOptions = {
+    minimap: { enabled: false }, fontSize: 14,
+    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+    lineNumbers: 'on' as const, scrollBeyondLastLine: false, automaticLayout: true,
+    tabSize: 4, readOnly, wordWrap: 'on' as const, padding: { top: 12 },
+    renderLineHighlight: 'line' as const, cursorBlinking: 'smooth' as const,
+    smoothScrolling: true, bracketPairColorization: { enabled: true },
+  };
 
   return (
     <div className={`rounded-lg border border-dark-600 overflow-hidden bg-dark-800 w-full ${isFullSize ? 'h-full flex flex-col' : ''}`}>
@@ -61,31 +92,16 @@ export default function CodeEditor({
           <span className="text-xs text-dark-400 ml-2 mono">Main.java</span>
         </div>
         <div className="flex items-center gap-1">
-          <button
-            onClick={handleCopy}
-            className="p-1.5 text-dark-400 hover:text-dark-200 transition-colors"
-            title="Code kopieren"
-          >
+          <button onClick={handleCopy} className="p-1.5 text-dark-400 hover:text-dark-200 transition-colors" title="Code kopieren">
             {copied ? <Check className="w-3.5 h-3.5 text-accent-green" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
-          <button
-            onClick={handleReset}
-            className="p-1.5 text-dark-400 hover:text-dark-200 transition-colors"
-            title="Zurücksetzen"
-          >
+          <button onClick={handleReset} className="p-1.5 text-dark-400 hover:text-dark-200 transition-colors" title="Zurücksetzen">
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
           {showRunButton && (
-            <button
-              onClick={handleRun}
-              disabled={isRunning}
-              className="flex items-center gap-1.5 px-3 py-1 rounded bg-accent-green/20 text-accent-green hover:bg-accent-green/30 disabled:opacity-50 transition-colors text-sm font-medium"
-            >
-              {isRunning ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Play className="w-3.5 h-3.5" />
-              )}
+            <button onClick={handleRun} disabled={isRunning}
+              className="flex items-center gap-1.5 px-3 py-1 rounded bg-accent-green/20 text-accent-green hover:bg-accent-green/30 disabled:opacity-50 transition-colors text-sm font-medium">
+              {isRunning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
               {isRunning ? 'Läuft...' : 'Ausführen'}
             </button>
           )}
@@ -94,54 +110,12 @@ export default function CodeEditor({
 
       {isFullSize ? (
         <div className="flex-1 min-h-0">
-          <Editor
-            height="100%"
-            defaultLanguage="java"
-            value={code}
-            onChange={handleEditorChange}
-            theme="vs-dark"
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-              lineNumbers: 'on',
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              tabSize: 4,
-              readOnly,
-              wordWrap: 'on',
-              padding: { top: 12 },
-              renderLineHighlight: 'line',
-              cursorBlinking: 'smooth',
-              smoothScrolling: true,
-              bracketPairColorization: { enabled: true },
-            }}
-          />
+          <Editor height="100%" defaultLanguage="java" value={code} onChange={handleEditorChange}
+            onMount={handleEditorMount} theme="vs-dark" options={editorOptions} />
         </div>
       ) : (
-        <Editor
-          height={height}
-          defaultLanguage="java"
-          value={code}
-          onChange={handleEditorChange}
-          theme="vs-dark"
-          options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-            lineNumbers: 'on',
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
-            tabSize: 4,
-            readOnly,
-            wordWrap: 'on',
-            padding: { top: 12 },
-            renderLineHighlight: 'line',
-            cursorBlinking: 'smooth',
-            smoothScrolling: true,
-            bracketPairColorization: { enabled: true },
-          }}
-        />
+        <Editor height={height} defaultLanguage="java" value={code} onChange={handleEditorChange}
+          onMount={handleEditorMount} theme="vs-dark" options={editorOptions} />
       )}
 
       {output && (
@@ -159,6 +133,17 @@ export default function CodeEditor({
             {output.stderr && <span className="text-accent-red">{output.stderr}</span>}
             {!output.stdout && !output.stderr && <span className="text-dark-500">(Keine Ausgabe)</span>}
           </pre>
+        </div>
+      )}
+
+      {explainLine && (
+        <div className="border-t border-dark-600 p-3 shrink-0">
+          <LineExplainPopover
+            line={explainLine.line}
+            lineNumber={explainLine.lineNumber}
+            fullCode={code}
+            onClose={() => setExplainLine(null)}
+          />
         </div>
       )}
     </div>

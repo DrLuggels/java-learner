@@ -1,4 +1,5 @@
 import type { Topic } from '../../../types';
+import { arraysSteps } from '../../steps/arrays-steps';
 
 export const arrays: Topic = {
   id: 'arrays',
@@ -197,4 +198,5 @@ Summe aller Elemente: 45`,
   ],
   transferKnowledge: 'Arrays sind die fundamentalste Datenstruktur in der Informatik. Sie existieren in praktisch jeder Programmiersprache: C/C++ (native Arrays), Python (list als flexiblere Variante), JavaScript (Array-Objekte). Das Verständnis von Index-basiertem Zugriff und fester Größe ist essenziell.',
   order: 14,
+  lessonSteps: arraysSteps,
 };

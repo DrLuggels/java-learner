@@ -1,4 +1,5 @@
 import type { Topic } from '../../../types';
+import { operatorenSteps } from '../../steps/operatoren-steps';
 
 export const operatoren: Topic = {
   id: 'operatoren',
@@ -274,4 +275,5 @@ Brutto (korrekt):  101.15`,
   ],
   transferKnowledge: 'Operatoren sind in fast allen Programmiersprachen identisch. Die arithmetischen, logischen und Vergleichsoperatoren funktionieren in Python, JavaScript, C# und C++ nahezu gleich. Unterschiede gibt es bei der Ganzzahl-Division: Python 3 nutzt // für Ganzzahl-Division, / ergibt immer float.',
   order: 8,
+  lessonSteps: operatorenSteps,
 };

@@ -19,6 +19,33 @@ export interface Topic {
   keyConceptsDE: string[];
   transferKnowledge: string;
   order: number;
+  lessonSteps?: LessonStep[];
+}
+
+// --- Interactive Lesson Types ---
+export type LessonStepType = 'content' | 'code-example' | 'challenge' | 'predict-output' | 'fill-blank' | 'quiz';
+
+export interface LessonStep {
+  id: string;
+  type: LessonStepType;
+  title?: string;
+  content?: string;
+  codeExample?: CodeExample;
+  challenge?: MiniChallenge;
+  predictCode?: string;
+  predictAnswer?: string;
+  predictExplanation?: string;
+  fillBlankCode?: string;
+  fillBlankAnswers?: string[];
+  quizQuestion?: QuizQuestion;
+}
+
+export interface MiniChallenge {
+  instruction: string;
+  starterCode: string;
+  expectedOutput?: string;
+  validationPattern?: string;
+  hint?: string;
 }
 
 export interface CodeExample {
@@ -37,6 +64,8 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export type ExerciseType = 'code' | 'parsons' | 'fix-bug' | 'predict-output';
+
 export interface Exercise {
   id: string;
   topicId: string;
@@ -50,6 +79,17 @@ export interface Exercise {
   expectedOutput?: string;
   tables?: ExerciseTable[];
   testCases: TestCase[];
+  exerciseType?: ExerciseType;
+  // Parsons-specific
+  parsonsLines?: string[];
+  parsonsDistractors?: string[];
+  // Fix-bug-specific
+  buggyCode?: string;
+  bugDescription?: string;
+  // Predict-output-specific
+  predictCode?: string;
+  predictOptions?: string[];
+  correctPredictIndex?: number;
 }
 
 export interface ExerciseTable {
@@ -107,4 +147,27 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+}
+
+// --- Test Runner Types ---
+export interface TestCaseResult {
+  testCase: TestCase;
+  passed: boolean;
+  actualOutput: string;
+  error?: string;
+}
+
+export interface TestRunResult {
+  results: TestCaseResult[];
+  allPassed: boolean;
+  passedCount: number;
+  totalCount: number;
+}
+
+// --- Parsed Error Types ---
+export interface ParsedError {
+  line: number;
+  message: string;
+  friendlyMessage: string;
+  severity: 'error' | 'warning';
 }

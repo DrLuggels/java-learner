@@ -1,4 +1,5 @@
 import type { Topic } from '../../../types';
+import { datentypenSteps } from '../../steps/datentypen-steps';
 
 export const datentypen: Topic = {
   id: 'datentypen',
@@ -231,4 +232,5 @@ nullbar ist null: true`,
   ],
   transferKnowledge: 'Fast jede Programmiersprache hat primitive Datentypen. Python unterscheidet zwischen int, float, str und bool. C hat ähnliche Typen wie Java. JavaScript hat nur number (kein int/double-Unterschied) und BigInt. Das Konzept der Typumwandlung existiert überall.',
   order: 5,
+  lessonSteps: datentypenSteps,
 };

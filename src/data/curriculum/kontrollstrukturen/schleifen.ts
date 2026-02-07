@@ -1,4 +1,5 @@
 import type { Topic } from '../../../types';
+import { schleifenSteps } from '../../steps/schleifen-steps';
 
 export const schleifen: Topic = {
   id: 'schleifen',
@@ -204,4 +205,5 @@ Dreieck:
   ],
   transferKnowledge: 'Schleifen sind universelle Konstrukte in jeder Programmiersprache. Python hat for/while (kein do-while), JavaScript bietet for, while, do-while und for...of. Das Konzept der Iteration ist fundamental für die gesamte Informatik.',
   order: 13,
+  lessonSteps: schleifenSteps,
 };

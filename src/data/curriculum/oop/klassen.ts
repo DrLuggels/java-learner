@@ -1,4 +1,5 @@
 import type { Topic } from '../../../types';
+import { klassenSteps } from '../../steps/klassen-steps';
 
 export const klassen: Topic = {
   id: 'klassen',
@@ -226,4 +227,5 @@ Instanzen gesamt: 3
   ],
   transferKnowledge: 'Klassen und Objekte gibt es in fast jeder modernen Programmiersprache: Python (class), C# (class), JavaScript/TypeScript (class), Kotlin (class), Swift (class/struct). Die Syntax unterscheidet sich, aber die Konzepte sind identisch.',
   order: 20,
+  lessonSteps: klassenSteps,
 };
