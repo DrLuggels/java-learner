@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import CodeBlock from './CodeBlock'
+import CodeEditor from './CodeEditor'
 import { runJava } from '../utils/javaRunner'
 
 export default function QuizQuestion({ question, onAnswer }) {
@@ -87,14 +88,9 @@ function MiniPlayground({ code }) {
           Schließen
         </button>
       </div>
-      <textarea
-        value={editCode}
-        onChange={e => setEditCode(e.target.value)}
-        onKeyDown={e => { if (e.ctrlKey && e.key === 'Enter') handleRun() }}
-        spellCheck={false}
-        className="w-full min-h-[120px] bg-slate-950 text-green-300 font-mono text-xs p-3 resize-y border-none outline-none"
-        style={{ tabSize: 4 }}
-      />
+      <div onKeyDown={e => { if (e.ctrlKey && e.key === 'Enter') handleRun() }}>
+        <CodeEditor value={editCode} onChange={setEditCode} minHeight={120} />
+      </div>
       <div className="px-3 py-1.5 border-t border-slate-700 flex items-center gap-3">
         <button
           onClick={handleRun}

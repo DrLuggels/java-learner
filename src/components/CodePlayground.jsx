@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { runJava } from '../utils/javaRunner'
+import CodeEditor from './CodeEditor'
 
 export default function CodePlayground({ initialCode, title }) {
   const [code, setCode] = useState(initialCode || DEFAULT_CODE)
@@ -7,8 +8,7 @@ export default function CodePlayground({ initialCode, title }) {
   const [hasRun, setHasRun] = useState(false)
 
   const handleRun = useCallback(() => {
-    const result = runJava(code)
-    setOutput(result)
+    setOutput(runJava(code))
     setHasRun(true)
   }, [code])
 
@@ -18,8 +18,12 @@ export default function CodePlayground({ initialCode, title }) {
     setHasRun(false)
   }
 
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.key === 'Enter') handleRun()
+  }
+
   return (
-    <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+    <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden" onKeyDown={handleKeyDown}>
       {title && (
         <div className="px-4 py-2 bg-slate-750 border-b border-slate-700 flex items-center justify-between">
           <span className="text-sm font-medium text-slate-300">{title}</span>
@@ -30,20 +34,11 @@ export default function CodePlayground({ initialCode, title }) {
         <div className="flex flex-col">
           <div className="px-3 py-1.5 bg-slate-900/50 border-b border-slate-700 flex items-center justify-between">
             <span className="text-xs text-slate-500 font-mono">Code</span>
-            <div className="flex gap-2">
-              <button onClick={handleReset} className="text-xs text-slate-500 hover:text-slate-300 bg-transparent border-none cursor-pointer">
-                Zurücksetzen
-              </button>
-            </div>
+            <button onClick={handleReset} className="text-xs text-slate-500 hover:text-slate-300 bg-transparent border-none cursor-pointer">
+              Zurücksetzen
+            </button>
           </div>
-          <textarea
-            value={code}
-            onChange={e => setCode(e.target.value)}
-            onKeyDown={e => { if (e.ctrlKey && e.key === 'Enter') handleRun() }}
-            spellCheck={false}
-            className="flex-1 min-h-[200px] bg-slate-900 text-green-300 font-mono text-sm p-3 resize-y border-none outline-none w-full"
-            style={{ tabSize: 4 }}
-          />
+          <CodeEditor value={code} onChange={setCode} minHeight={200} />
         </div>
         <div className="flex flex-col">
           <div className="px-3 py-1.5 bg-slate-900/50 border-b border-slate-700">
