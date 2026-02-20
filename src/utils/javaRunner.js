@@ -69,8 +69,10 @@ function processLine(line) {
   s = s.replace(/'(.)'\s*([+\-*%])\s*/g, "'$1'.charCodeAt(0) $2 ")
   s = s.replace(/\s*([+\-*%])\s*'(.)'/g, " $1 '$2'.charCodeAt(0)")
 
-  // .equals( → ===
-  s = s.replace(/\.equals\s*\(\s*/g, ' === (')
+  // Java String methods → JS equivalents
+  s = s.replace(/\.length\(\)/g, '.length')  // .length() → .length (property in JS)
+  s = s.replace(/\.equals\s*\(/g, ' === (')
+  s = s.replace(/\.equalsIgnoreCase\s*\(/g, '.toLowerCase() === (')  // approximate
 
   // long/float suffixes
   s = s.replace(/(\d+)[lL]\b/g, '$1')
