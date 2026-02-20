@@ -7,6 +7,8 @@ import QuizQuestion from '../components/QuizQuestion'
 import QuizResult from '../components/QuizResult'
 import useProgress from '../hooks/useProgress'
 import useWeakness from '../hooks/useWeakness'
+import CodePlayground from '../components/CodePlayground'
+import { examples } from '../data/playgroundExamples'
 import { shuffle } from '../utils/shuffle'
 
 export default function ModulePage() {
@@ -66,6 +68,8 @@ export default function ModulePage() {
 
       <TheorySection theory={data.theory} />
 
+      <PlaygroundSection moduleId={Number(id)} />
+
       {!showQuiz ? (
         <button
           onClick={() => setShowQuiz(true)}
@@ -90,6 +94,20 @@ function TheorySection({ theory }) {
       <h2 className="text-lg font-semibold text-white">Theorie</h2>
       {theory.map((t, i) => (
         <TheoryCard key={i} title={t.title} content={t.content} code={t.code} />
+      ))}
+    </div>
+  )
+}
+
+function PlaygroundSection({ moduleId }) {
+  const moduleExamples = examples[moduleId]
+  if (!moduleExamples || moduleExamples.length === 0) return null
+  return (
+    <div className="mt-8 space-y-4">
+      <h2 className="text-lg font-semibold text-white">Code Playground — Probier es aus!</h2>
+      <p className="text-sm text-slate-400">Ändere den Code und drücke "Ausführen" um die Ausgabe zu sehen.</p>
+      {moduleExamples.map((ex, i) => (
+        <CodePlayground key={i} initialCode={ex.code} title={ex.title} />
       ))}
     </div>
   )

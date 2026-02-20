@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import ModulePage from './pages/ModulePage'
 import ExamPage from './pages/ExamPage'
 import WeaknessPage from './pages/WeaknessPage'
+import PlaygroundPage from './pages/PlaygroundPage'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/modul/:id" element={<ModulePage />} />
         <Route path="/klausur" element={<ExamPage />} />
         <Route path="/schwaechen" element={<WeaknessPage />} />
+        <Route path="/playground" element={<PlaygroundPage />} />
       </Routes>
     </Layout>
   )

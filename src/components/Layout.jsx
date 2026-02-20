@@ -17,6 +17,9 @@ export default function Layout({ children }) {
             <NavLink to="/schwaechen" active={location.pathname === '/schwaechen'}>
               Schwächen
             </NavLink>
+            <NavLink to="/playground" active={location.pathname === '/playground'}>
+              Playground
+            </NavLink>
             <NavLink to="/klausur" active={location.pathname === '/klausur'}>
               Klausur
             </NavLink>
