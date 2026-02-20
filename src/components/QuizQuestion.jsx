@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import CodeBlock from './CodeBlock'
+import { runJava } from '../utils/javaRunner'
 
 export default function QuizQuestion({ question, onAnswer }) {
   const [selected, setSelected] = useState(null)
@@ -25,6 +26,7 @@ export default function QuizQuestion({ question, onAnswer }) {
       {question.code && (
         <div className="mb-4">
           <CodeBlock code={question.code} />
+          <MiniPlayground code={question.code} />
         </div>
       )}
       {question.type === 'text' ? (
@@ -55,6 +57,72 @@ export default function QuizQuestion({ question, onAnswer }) {
       )}
     </div>
   )
+}
+
+function MiniPlayground({ code }) {
+  const [editCode, setEditCode] = useState(wrapInMain(code))
+  const [output, setOutput] = useState(null)
+  const [open, setOpen] = useState(false)
+
+  const handleRun = () => {
+    setOutput(runJava(editCode))
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-2 text-xs text-blue-400 hover:text-blue-300 bg-transparent border-none cursor-pointer underline"
+      >
+        Code ausprobieren & bearbeiten
+      </button>
+    )
+  }
+
+  return (
+    <div className="mt-2 bg-slate-900 rounded border border-slate-700 overflow-hidden">
+      <div className="px-3 py-1.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+        <span className="text-xs text-slate-500">Playground — ändere den Code!</span>
+        <button onClick={() => setOpen(false)} className="text-xs text-slate-500 hover:text-slate-300 bg-transparent border-none cursor-pointer">
+          Schließen
+        </button>
+      </div>
+      <textarea
+        value={editCode}
+        onChange={e => setEditCode(e.target.value)}
+        onKeyDown={e => { if (e.ctrlKey && e.key === 'Enter') handleRun() }}
+        spellCheck={false}
+        className="w-full min-h-[120px] bg-slate-950 text-green-300 font-mono text-xs p-3 resize-y border-none outline-none"
+        style={{ tabSize: 4 }}
+      />
+      <div className="px-3 py-1.5 border-t border-slate-700 flex items-center gap-3">
+        <button
+          onClick={handleRun}
+          className="px-3 py-1 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700 transition-colors border-none cursor-pointer"
+        >
+          ▶ Ausführen
+        </button>
+        <button
+          onClick={() => setEditCode(wrapInMain(code))}
+          className="text-xs text-slate-500 hover:text-slate-300 bg-transparent border-none cursor-pointer"
+        >
+          Zurücksetzen
+        </button>
+      </div>
+      {output !== null && (
+        <div className="px-3 py-2 bg-slate-950 border-t border-slate-700 font-mono text-xs whitespace-pre-wrap">
+          <span className={output.startsWith('Fehler') ? 'text-red-400' : 'text-white'}>
+            {output || '(keine Ausgabe)'}
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function wrapInMain(code) {
+  if (code.includes('class ') || code.includes('public static void main')) return code
+  return `public class Main {\n    public static void main(String[] args) {\n        ${code.replace(/\n/g, '\n        ')}\n    }\n}`
 }
 
 function checkAnswer(question, answer) {
