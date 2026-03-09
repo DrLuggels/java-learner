@@ -7,7 +7,7 @@ public enum CreateType{
     NORMAL, COOLED;
 
     public boolean isCooled(){
-        return this = CreateType.COOLED;
+        return this == CreateType.COOLED;
     }}
 
     public class Shelf{
