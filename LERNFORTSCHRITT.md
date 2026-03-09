@@ -1,6 +1,6 @@
 # Lernfortschritt Java 1 — Klausurvorbereitung
 
-## Aktueller Stand: Phase 8 (Comparable & Comparator)
+## Aktueller Stand: Phase 11 (Komplette Klausuraufgaben)
 
 ### Abgeschlossene Phasen
 
@@ -13,10 +13,10 @@
 | 5 | Exceptions (eigene Exception, throw/throws, try/catch) | Fertig |
 | 6 | Enums mit Attributen, Konstruktor, Getter | Fertig |
 | 7 | Abstrakte Klassen (abstract class, abstract Methode) | Fertig |
-| **8** | **Comparable & Comparator (Sortierung)** | **Als nächstes — Erklärung gelesen, noch nicht geübt** |
-| 9 | toString() | Offen |
-| 10 | Theoriefragen (if-else vs switch, abstract vs interface) | Offen |
-| 11 | Komplette Klausuraufgaben üben | Offen |
+| 8 | Comparable & Comparator (Sortierung) | Fertig |
+| 9 | toString() | Fertig |
+| 10 | Theoriefragen (if-else vs switch, abstract vs interface) | Fertig |
+| **11** | **Komplette Klausuraufgaben üben** | **Als nächstes** |
 
 ### Was als nächstes kommt (Phase 8)
 
